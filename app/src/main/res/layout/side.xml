@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="270dp"
+    android:layout_height="match_parent"
+    android:background="@color/mygrew"
+    android:paddingTop="50dp"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/img_head"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="30dp"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/txt_nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginLeft="20dp"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:layout_toRightOf="@id/img_head"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:text="蒲公英的半海" />
+
+    <TextView
+        android:id="@+id/txt_label"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_alignLeft="@id/img_head"
+        android:layout_below="@id/img_head"
+        android:textColor="@color/black"
+        android:text="talkId：" />
+
+    <TextView
+        android:id="@+id/txt_id"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_toRightOf="@id/txt_label"
+        android:layout_below="@id/img_head"
+        android:textColor="@color/colorAccent"
+        android:text="20" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="10dp"
+        android:textSize="15sp"
+        android:id="@+id/btn_exit"
+        android:textColor="@color/white"
+        android:background="@drawable/blue_radius_bg"
+        android:layout_alignParentBottom="true"
+        android:text="退出账号"/>
+</RelativeLayout>

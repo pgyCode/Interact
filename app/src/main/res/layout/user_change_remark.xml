@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:background="@color/color_cheng"
+    android:clipToPadding="true"
+    android:fitsSystemWindows="true"
+    android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/img_bg"
+        android:background="@color/color_cheng"/>
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="fitCenter"
+        android:id="@+id/btn_back"
+        android:background="@color/touming"
+        android:src="@drawable/backer"
+        android:padding="18dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:scaleType="fitCenter"
+        android:id="@+id/btn_sure"
+        android:layout_alignParentRight="true"
+        android:text="完成"
+        android:textColor="@color/white"
+        android:background="@color/touming"
+        android:padding="15dp"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:layout_alignBottom="@id/img_bg"
+        android:layout_marginBottom="20dp"
+        android:lines="1"
+        android:id="@+id/edt_remark"
+        android:maxLength="20"
+        android:background="@drawable/bottom_white_bg"
+        android:textSize="18sp"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_below="@id/img_bg"
+        android:background="@color/white"
+        android:layout_height="match_parent">
+    </RelativeLayout>
+
+
+    <ViewStub
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/loading"
+        android:layout="@layout/loading"/>
+</RelativeLayout>

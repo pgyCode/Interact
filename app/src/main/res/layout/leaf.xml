@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/btn_owner"
+        android:background="@color/bwhite"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@color/white"
+            android:layout_marginTop="20dp">
+            <ImageView
+                android:layout_width="100dp"
+                android:id="@+id/img_head"
+                android:padding="10dp"
+                android:src="@mipmap/ic_launcher"
+                android:layout_height="100dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="测试"
+                android:paddingLeft="10dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:textSize="17sp"
+                android:layout_toRightOf="@id/img_head"
+                android:id="@+id/txt_nick"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:text="测试"
+                android:paddingLeft="10dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:textSize="17sp"
+                android:layout_below="@id/txt_nick"
+                android:layout_height="50dp"
+                android:layout_alignLeft="@id/txt_nick"
+                android:id="@+id/txt_id"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:id="@+id/btn_exit"
+            android:layout_marginTop="20dp"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:layout_height="50dp">
+            <ImageView
+                android:layout_width="50dp"
+                android:padding="11dp"
+                android:layout_height="50dp"
+                android:src="@drawable/send_fail"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="17sp"
+                android:textColor="@color/black"
+                android:text="退出"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/header"
+        android:fitsSystemWindows="true"
+        android:background="@color/color_cheng"
+        android:layout_height="73dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="个人信息"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:id="@+id/txt_toname"/>
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:id="@+id/btn_back"
+            android:layout_alignParentBottom="true"
+            android:background="@color/touming"
+            android:src="@drawable/backer"
+            android:padding="18dp"/>
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:background="@color/bwhite"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:layout_height="70dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="17sp"
+                android:layout_marginLeft="20dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:text="头像"/>
+            <ImageView
+                android:layout_width="70dp"
+                android:padding="10dp"
+                android:layout_alignParentRight="true"
+                android:layout_height="70dp"
+                android:paddingRight="10dp"
+                android:src="@mipmap/ic_launcher"
+                android:id="@+id/img_head"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:layout_height="50dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="17sp"
+                android:layout_marginLeft="20dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:text="昵称"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:layout_height="50dp"
+                android:text="ceshi "
+                android:paddingRight="10dp"
+                android:layout_alignParentRight="true"
+                android:textSize="17sp"
+                android:id="@+id/txt_nick"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:layout_height="50dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="17sp"
+                android:layout_marginLeft="20dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:text="talkId"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:layout_height="50dp"
+                android:text="ceshi "
+                android:paddingRight="10dp"
+                android:layout_alignParentRight="true"
+                android:textSize="17sp"
+                android:id="@+id/txt_id"/>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

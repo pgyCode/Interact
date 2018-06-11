@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/awhite"
+    android:focusableInTouchMode="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/header"
+        android:gravity="bottom"
+        android:background="@color/color_cheng"
+        android:layout_height="73dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="注册新用户"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            android:id="@+id/txt_toname"/>
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:id="@+id/btn_back"
+            android:layout_alignParentBottom="true"
+            android:background="@color/touming"
+            android:src="@drawable/backer"
+            android:padding="18dp"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@id/header"
+        android:layout_height="match_parent">
+
+
+        <EditText
+            android:id="@+id/edt_nickname"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_below="@id/title"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:textSize="15sp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/white_radius_bg"
+            android:hint="请输入你想要的昵称"
+            android:paddingLeft="7dp" />
+
+        <EditText
+            android:id="@+id/edt_password"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_below="@id/edt_nickname"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:textSize="15sp"
+            android:background="@drawable/white_radius_bg"
+            android:hint="请输入你想要的密码"
+            android:paddingLeft="7dp" />
+
+        <EditText
+            android:id="@+id/edt_repassword"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_below="@id/edt_password"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:textSize="15sp"
+            android:background="@drawable/white_radius_bg"
+            android:hint="请重复输入你想要的密码"
+            android:paddingLeft="7dp" />
+
+        <Button
+            android:id="@+id/btn_regist"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_below="@id/edt_repassword"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/ablue_radius_bg"
+            android:text="注册"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
+
+    <ViewStub
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/loading"
+        android:layout="@layout/loading"/>
+    <requestFocus/>
+</RelativeLayout>

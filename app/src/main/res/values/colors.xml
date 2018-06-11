@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="white">#ffffff</color>
+    <color name="awhite">#f7f7f7</color>
+    <color name="bwhite">#e2dcdc</color>
+    <color name="ablack">#77000000</color>
+    <color name="touming">#00000000</color>
+    <color name="myblue">#3db8ff</color>
+    <color name="mygrew">#88999999</color>
+    <color name="black">#ff000000</color>
+    <color name="red">#f22a2a</color>
+
+    <color name="green">#339633</color>
+
+
+    <color name="color_truegrew">#ff999999</color>
+    <color name="color_cheng">#ff6633</color>
+    <color name="color_blue">#99cccc</color>
+</resources>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:focusable="true"
+    android:fitsSystemWindows="true"
+    android:focusableInTouchMode="true"
+    android:background="@color/color_cheng"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/header"
+        android:layout_height="50dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="联系人name"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:id="@+id/txt_toname"/>
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:id="@+id/btn_back"
+            android:layout_alignParentBottom="true"
+            android:background="@color/touming"
+            android:src="@drawable/backer"
+            android:padding="18dp"/>
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_height="50dp"
+            android:id="@+id/btn_info"
+            android:layout_alignParentBottom="true"
+            android:scaleType="fitCenter"
+            android:background="@color/touming"
+            android:src="@drawable/talk_user"
+            android:padding="15dp"/>
+    </RelativeLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:id="@+id/lst"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"
+        android:background="@color/white"
+        android:divider="@null"
+        android:layout_below="@id/header"
+        android:layout_above="@+id/divider"
+        android:layout_height="match_parent">
+
+    </ListView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/divider"
+        android:background="@color/color_truegrew"
+        android:layout_above="@id/footer"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:id="@+id/footer"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"
+        android:minHeight="50dp">
+        <EditText
+            android:layout_width="0px"
+            android:layout_weight="1"
+            android:layout_toLeftOf="@id/btn_send"
+            android:id="@+id/edt_msg"
+            android:textSize="15dp"
+            android:paddingTop="10dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:maxLines="5"
+            android:paddingBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:paddingLeft="5dp"
+            android:textStyle="bold"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/edt_msg_bg"
+            android:layout_alignParentBottom="true"
+            android:minHeight="40dp" />
+
+        <Button
+            android:id="@+id/btn_send"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/btn_talk_bg"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:layout_marginBottom="3dp"
+            android:text="发 送"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <requestFocus/>
+</RelativeLayout>
