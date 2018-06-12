@@ -34,6 +34,7 @@ import com.example.rtyui.mvptalk.tool.NetTaskCode;
 import com.example.rtyui.mvptalk.tool.NetTaskCodeListener;
 import com.example.rtyui.mvptalk.tool.NetTaskSet;
 import com.example.rtyui.mvptalk.tool.NetTaskSetListener;
+import com.example.rtyui.mvptalk.view.msg.TalkActivity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -67,19 +68,28 @@ public class ChoosePhotoActivity extends Activity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Intent intent = new Intent();
-                intent.setAction("com.android.camera.action.CROP");
-                Uri uri = Uri.fromFile(new File(photos.get(position)));
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                intent.setDataAndType(uri, "image/*");
-                intent.putExtra("crop", "true");
-                intent.putExtra("aspectX", 1);// 裁剪框比例
-                intent.putExtra("aspectY", 1);
-                intent.putExtra("outputX", 150);// 输出图片大小
-                intent.putExtra("outputY", 150);
-                intent.putExtra("return-data", true);
-                ChoosePhotoActivity.this.startActivityForResult(intent, CROP_HEADIMG);
+                int temp = getIntent().getIntExtra("sign", -1);
+                switch (temp){
+                    case App.PHOTO_CHOOSE_SIGN_CUTIMG:
+                        Intent intent = new Intent();
+                        intent.setAction("com.android.camera.action.CROP");
+                        Uri uri = Uri.fromFile(new File(photos.get(position)));
+                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        intent.setDataAndType(uri, "image/*");
+                        intent.putExtra("crop", "true");
+                        intent.putExtra("aspectX", 1);// 裁剪框比例
+                        intent.putExtra("aspectY", 1);
+                        intent.putExtra("outputX", 150);// 输出图片大小
+                        intent.putExtra("outputY", 150);
+                        intent.putExtra("return-data", true);
+                        ChoosePhotoActivity.this.startActivityForResult(intent, CROP_HEADIMG);
+                        break;
+                    case App.PHOTO_CHOOSE_SIGN_SENDIMG:
+                        Intent intent1 = new Intent(ChoosePhotoActivity.this, TalkActivity.class);
+                        intent1.putExtra("path", photos.get(position));
+                        startActivity(intent1);
+                        break;
+                }
             }
         });
 

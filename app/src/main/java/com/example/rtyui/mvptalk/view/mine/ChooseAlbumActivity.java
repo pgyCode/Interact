@@ -46,6 +46,7 @@ public class ChooseAlbumActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(ChooseAlbumActivity.this, ChoosePhotoActivity.class);
                 intent.putExtra("photos", (Serializable) albums.get(albums.keySet().toArray()[position]));
+                intent.putExtra("sign", getIntent().getIntExtra("sign", -1));
                 startActivity(intent);
             }
         });

@@ -61,45 +61,72 @@
         android:layout_above="@id/footer"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:id="@+id/footer"
-        android:orientation="horizontal"
-        android:background="@color/white"
-        android:layout_alignParentBottom="true"
+        android:minHeight="100dp"
         android:layout_height="wrap_content"
-        android:minHeight="50dp">
-        <EditText
-            android:layout_width="0px"
-            android:layout_weight="1"
-            android:layout_toLeftOf="@id/btn_send"
-            android:id="@+id/edt_msg"
-            android:textSize="15dp"
-            android:paddingTop="10dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:id="@+id/footer"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:maxLines="5"
-            android:paddingBottom="10dp"
-            android:layout_marginTop="5dp"
-            android:paddingLeft="5dp"
-            android:textStyle="bold"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/edt_msg_bg"
-            android:layout_alignParentBottom="true"
-            android:minHeight="40dp" />
+            android:minHeight="50dp">
+            <EditText
+                android:layout_width="0px"
+                android:layout_weight="1"
+                android:layout_toLeftOf="@id/btn_send"
+                android:id="@+id/edt_msg"
+                android:textSize="15dp"
+                android:paddingTop="10dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:maxLines="5"
+                android:paddingBottom="10dp"
+                android:layout_marginTop="5dp"
+                android:paddingLeft="5dp"
+                android:textStyle="bold"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/edt_msg_bg"
+                android:layout_alignParentBottom="true"
+                android:minHeight="40dp" />
 
-        <Button
-            android:id="@+id/btn_send"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
-            android:layout_gravity="bottom"
-            android:background="@drawable/btn_talk_bg"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:layout_marginBottom="3dp"
-            android:text="发 送"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            <Button
+                android:id="@+id/btn_send"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/btn_talk_bg"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:layout_marginBottom="3dp"
+                android:text="发 送"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_truegrew"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="图片"
+                android:id="@+id/btn_img"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="文件"
+                android:id="@+id/btn_file"/>
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -37,6 +37,13 @@ public class App extends Application {
     public static final String LOGIN_ACTION = "LOGIN_ACTION";
     public static final String EXIT_ACTION = "EXIT_ACTION";
 
+
+    public static final String MSG_CHAT = "MSG_CHAT:";
+    public static final String MSG_IMG = "MSG_IMG:";
+
+    public static final int PHOTO_CHOOSE_SIGN_SENDIMG = 100000;
+    public static final int PHOTO_CHOOSE_SIGN_CUTIMG = 100001;
+
     public static final int LINK_FRIEND_RESPONSE_NO_ONE = 100000;//无此人
     public static final int LINK_FRIEND_RESPONSE_HAD = 100001;//已经是好友
     public static final int LINK_FRIEND_RESPONSE_SEND_OK = 100002;//请求成功

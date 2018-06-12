@@ -63,61 +63,133 @@ public class TalkAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder = null;
-        if (convertView == null){
-            viewHolder = new ViewHolder();
-            if (MsgModel.getInstance().getCombeanById(id).chats.get(position).getSendId() == AccountModel.getInstance().currentUser.id){
-                convertView = LayoutInflater.from(context).inflate(R.layout.talk_my_item, null, false);
-                viewHolder.mine = true;
-            }else{
-                convertView = LayoutInflater.from(context).inflate(R.layout.talk_other_item, null, false);
-                viewHolder.mine = false;
-            }
-            viewHolder.txtMsg = convertView.findViewById(R.id.txt_msg);
-            viewHolder.imgHead = convertView.findViewById(R.id.img_head);
-            viewHolder.imgStatu = convertView.findViewById(R.id.img_statu);
-            convertView.setTag(viewHolder);
-        }else{
-            if ((MsgModel.getInstance().getCombeanById(id).chats.get(position).getSendId() == AccountModel.getInstance().currentUser.id && ((ViewHolder)convertView.getTag()).mine) ||
-                    (MsgModel.getInstance().getCombeanById(id).chats.get(position).getSendId() != AccountModel.getInstance().currentUser.id && !((ViewHolder)convertView.getTag()).mine)){
-                viewHolder = (ViewHolder) convertView.getTag();
-            }else {
-                viewHolder = new ViewHolder();
-                if (MsgModel.getInstance().getCombeanById(id).chats.get(position).getSendId() == AccountModel.getInstance().currentUser.id){
-                    convertView = LayoutInflater.from(context).inflate(R.layout.talk_my_item, null, false);
-                    viewHolder.mine = true;
-                }else{
-                    convertView = LayoutInflater.from(context).inflate(R.layout.talk_other_item, null, false);
-                    viewHolder.mine = false;
-                }
-                viewHolder.txtMsg = convertView.findViewById(R.id.txt_msg);
-                viewHolder.imgHead = convertView.findViewById(R.id.img_head);
-                viewHolder.imgStatu = convertView.findViewById(R.id.img_statu);
-                convertView.setTag(viewHolder);
-            }
-        }
-        if (viewHolder.mine){
-            switch (MsgModel.getInstance().getCombeanById(id).chats.get(position).statu){
-                case App.MSG_SEND_ING:
-                    viewHolder.imgStatu.setVisibility(View.VISIBLE);
-                    viewHolder.imgStatu.setImageResource(R.drawable.loading_anim);
-                    AnimationDrawable drawable = (AnimationDrawable) viewHolder.imgStatu.getDrawable();
-                    drawable.start();
-                    break;
-                case App.MSG_SEND_GOOD:
-                    viewHolder.imgStatu.setVisibility(View.GONE);
-                    break;
-                case App.MSG_SEND_BAD:
-                    viewHolder.imgStatu.setVisibility(View.VISIBLE);
-                    viewHolder.imgStatu.setImageResource(R.drawable.send_fail);
-            }
-            MyImgShow.showNetImgCircle(context, AccountModel.getInstance().currentUser.headImgUrl, viewHolder.imgHead);
-        }else{
-            MyImgShow.showNetImgCircle(context, FriendModel.getInstance().getUserById(id).headImgUrl, viewHolder.imgHead);
-        }
 
-        viewHolder.txtMsg.setText(MsgModel.getInstance().getCombeanById(id).chats.get(position).getMsg());
+        //ViewHolder viewHolder = null;
+        ChatBean bean = MsgModel.getInstance().getCombeanById(id).chats.get(position);
+        //自己发出的消息
+        if (bean.sendId == AccountModel.getInstance().currentUser.id){
+            if (bean.msg.startsWith(App.MSG_CHAT)){
+                convertView = LayoutInflater.from(context).inflate(R.layout.talk_my_item, null, false);
+                TextView txtMsg = convertView.findViewById(R.id.txt_msg);
+                ImageView imgHead = convertView.findViewById(R.id.img_head);
+                ImageView imgStatu = convertView.findViewById(R.id.img_statu);
+                txtMsg.setText(bean.msg.replace(App.MSG_CHAT, ""));
+                MyImgShow.showNetImgCircle(context, AccountModel.getInstance().currentUser.headImgUrl, imgHead);
+                switch (bean.statu){
+                    case App.MSG_SEND_ING:
+                        imgStatu.setVisibility(View.VISIBLE);
+                        imgStatu.setImageResource(R.drawable.loading_anim);
+                        AnimationDrawable drawable = (AnimationDrawable) imgStatu.getDrawable();
+                        drawable.start();
+                        break;
+                    case App.MSG_SEND_GOOD:
+                        imgStatu.setVisibility(View.GONE);
+                        break;
+                    case App.MSG_SEND_BAD:
+                        imgStatu.setVisibility(View.VISIBLE);
+                        imgStatu.setImageResource(R.drawable.send_fail);
+                }
+            }
+            else if(bean.msg.startsWith(App.MSG_IMG)){
+                convertView = LayoutInflater.from(context).inflate(R.layout.talk_my_img, null, false);
+                ImageView imgContent = convertView.findViewById(R.id.img_content);
+                ImageView imgHead = convertView.findViewById(R.id.img_head);
+                ImageView imgStatu = convertView.findViewById(R.id.img_statu);
+                MyImgShow.showLocalImgSquare(context, bean.msg.replace(App.MSG_IMG, ""), imgContent);
+                MyImgShow.showNetImgCircle(context, AccountModel.getInstance().currentUser.headImgUrl, imgHead);
+                switch (bean.statu){
+                    case App.MSG_SEND_ING:
+                        imgStatu.setVisibility(View.VISIBLE);
+                        imgStatu.setImageResource(R.drawable.loading_anim);
+                        AnimationDrawable drawable = (AnimationDrawable) imgStatu.getDrawable();
+                        drawable.start();
+                        break;
+                    case App.MSG_SEND_GOOD:
+                        imgStatu.setVisibility(View.GONE);
+                        break;
+                    case App.MSG_SEND_BAD:
+                        imgStatu.setVisibility(View.VISIBLE);
+                        imgStatu.setImageResource(R.drawable.send_fail);
+                }
+            }else{
+
+            }
+        }
+        //来自别人的消息
+        else{
+            if (bean.msg.startsWith(App.MSG_CHAT)){
+                convertView = LayoutInflater.from(context).inflate(R.layout.talk_other_item, null, false);
+                TextView txtMsg = convertView.findViewById(R.id.txt_msg);
+                ImageView imgHead = convertView.findViewById(R.id.img_head);
+                txtMsg.setText(bean.msg.replace(App.MSG_CHAT, ""));
+                MyImgShow.showNetImgCircle(context, FriendModel.getInstance().getUserById(bean.sendId).headImgUrl, imgHead);
+            }
+            else if(bean.msg.startsWith(App.MSG_IMG)){
+                convertView = LayoutInflater.from(context).inflate(R.layout.talk_other_img, null, false);
+                ImageView imgContent = convertView.findViewById(R.id.img_content);
+                ImageView imgHead = convertView.findViewById(R.id.img_head);
+                MyImgShow.showLocalImgSquare(context, bean.msg.replace(App.MSG_IMG, ""), imgContent);
+                MyImgShow.showNetImgCircle(context, AccountModel.getInstance().currentUser.headImgUrl, imgHead);
+            }else{
+
+            }
+        }
         return convertView;
+//        ViewHolder viewHolder = null;
+//        if (convertView == null){
+//            viewHolder = new ViewHolder();
+//            if (MsgModel.getInstance().getCombeanById(id).chats.get(position).getSendId() == AccountModel.getInstance().currentUser.id){
+//                convertView = LayoutInflater.from(context).inflate(R.layout.talk_my_item, null, false);
+//                viewHolder.mine = true;
+//            }else{
+//                convertView = LayoutInflater.from(context).inflate(R.layout.talk_other_item, null, false);
+//                viewHolder.mine = false;
+//            }
+//            viewHolder.txtMsg = convertView.findViewById(R.id.txt_msg);
+//            viewHolder.imgHead = convertView.findViewById(R.id.img_head);
+//            viewHolder.imgStatu = convertView.findViewById(R.id.img_statu);
+//            convertView.setTag(viewHolder);
+//        }else{
+//            if ((MsgModel.getInstance().getCombeanById(id).chats.get(position).getSendId() == AccountModel.getInstance().currentUser.id && ((ViewHolder)convertView.getTag()).mine) ||
+//                    (MsgModel.getInstance().getCombeanById(id).chats.get(position).getSendId() != AccountModel.getInstance().currentUser.id && !((ViewHolder)convertView.getTag()).mine)){
+//                viewHolder = (ViewHolder) convertView.getTag();
+//            }else {
+//                viewHolder = new ViewHolder();
+//                if (MsgModel.getInstance().getCombeanById(id).chats.get(position).getSendId() == AccountModel.getInstance().currentUser.id){
+//                    convertView = LayoutInflater.from(context).inflate(R.layout.talk_my_item, null, false);
+//                    viewHolder.mine = true;
+//                }else{
+//                    convertView = LayoutInflater.from(context).inflate(R.layout.talk_other_item, null, false);
+//                    viewHolder.mine = false;
+//                }
+//                viewHolder.txtMsg = convertView.findViewById(R.id.txt_msg);
+//                viewHolder.imgHead = convertView.findViewById(R.id.img_head);
+//                viewHolder.imgStatu = convertView.findViewById(R.id.img_statu);
+//                convertView.setTag(viewHolder);
+//            }
+//        }
+//        if (viewHolder.mine){
+//            switch (MsgModel.getInstance().getCombeanById(id).chats.get(position).statu){
+//                case App.MSG_SEND_ING:
+//                    viewHolder.imgStatu.setVisibility(View.VISIBLE);
+//                    viewHolder.imgStatu.setImageResource(R.drawable.loading_anim);
+//                    AnimationDrawable drawable = (AnimationDrawable) viewHolder.imgStatu.getDrawable();
+//                    drawable.start();
+//                    break;
+//                case App.MSG_SEND_GOOD:
+//                    viewHolder.imgStatu.setVisibility(View.GONE);
+//                    break;
+//                case App.MSG_SEND_BAD:
+//                    viewHolder.imgStatu.setVisibility(View.VISIBLE);
+//                    viewHolder.imgStatu.setImageResource(R.drawable.send_fail);
+//            }
+//            MyImgShow.showNetImgCircle(context, AccountModel.getInstance().currentUser.headImgUrl, viewHolder.imgHead);
+//        }else{
+//            MyImgShow.showNetImgCircle(context, FriendModel.getInstance().getUserById(id).headImgUrl, viewHolder.imgHead);
+//        }
+//
+//        viewHolder.txtMsg.setText(MsgModel.getInstance().getCombeanById(id).chats.get(position).getMsg());
+//        return convertView;
     }
 
 

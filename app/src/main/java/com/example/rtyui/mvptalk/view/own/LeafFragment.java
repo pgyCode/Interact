@@ -83,6 +83,11 @@ public class LeafFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
         AccountModel.getInstance().listeners.remove(modelListener);
     }
 }
