@@ -43,7 +43,6 @@
     <ListView
         android:layout_width="match_parent"
         android:id="@+id/lst"
-        android:stackFromBottom="true"
         android:transcriptMode="alwaysScroll"
         android:background="@color/T_color_talk_hui"
         android:divider="@null"
@@ -51,10 +50,11 @@
         android:layout_above="@+id/footer"
         android:layout_height="match_parent">
 
+        <!--android:stackFromBottom="true"-->
     </ListView>
     <LinearLayout
         android:layout_width="match_parent"
-        android:minHeight="100dp"
+        android:minHeight="80dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/T_color_talk_hui"
@@ -101,16 +101,16 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="40dp"
             android:orientation="horizontal">
             <Button
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:text="图片"
                 android:id="@+id/btn_img"/>
             <Button
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:text="文件"
                 android:id="@+id/btn_file"/>
         </LinearLayout>

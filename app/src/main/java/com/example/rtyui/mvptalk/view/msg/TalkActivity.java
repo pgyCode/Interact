@@ -161,6 +161,7 @@ public class TalkActivity extends Activity{
 
         try{MsgModel.getInstance().getCombeanById(userId).unread = 0;}catch(Exception e){};
         listView.setAdapter(talkAdapter = new TalkAdapter(this, userId));
+        listView.setSelection(talkAdapter.getCount() - 1);
         MsgModel.getInstance().actListeners();
     }
 
