@@ -18,7 +18,7 @@
             android:layout_height="60dp" />
         <TextView
             android:layout_width="wrap_content"
-            android:textSize="14dp"
+            android:textSize="15dp"
             android:lineSpacingMultiplier="1.4"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
@@ -26,14 +26,13 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/color_blue_radius_bg"
+            android:background="@drawable/color_white_radius_bg"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/img_statu"
             android:layout_toLeftOf="@id/img_head"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:text="测试测试"
-            android:minHeight="40dp"
-            android:textStyle="bold"
+            android:minHeight="38dp"
             android:id="@+id/txt_msg"/>
 
     </LinearLayout>

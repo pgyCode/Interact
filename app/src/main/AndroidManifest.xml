@@ -41,6 +41,8 @@
         <activity android:name=".view.mine.ChoosePhotoActivity"/>
         <activity android:name=".view.mine.OwnerActivity"/>
 
+        <activity android:name=".view.common.ImgShowActivity"/>
+
         <activity android:name=".view.msg.TalkActivity"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize"/>

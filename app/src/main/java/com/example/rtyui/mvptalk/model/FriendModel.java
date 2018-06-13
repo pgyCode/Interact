@@ -54,16 +54,13 @@ public class FriendModel extends Model {
      * @param id
      * @return 对应id的用户
      */
-    public UserBean getUserById(int id){
-        for (UserBean userBean : linkFriends){
+    public UserBean getUserById(int id) {
+        for (UserBean userBean : linkFriends) {
             if (userBean.id == id)
                 return userBean;
         }
         return null;
     }
-
-
-
 
     /**
      * 请求好友列表

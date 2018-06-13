@@ -11,6 +11,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.rtyui.mvptalk.R;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 /**
  * Created by rtyui on 2018/4/25.
@@ -25,7 +26,7 @@ public class MyImgShow {
                 .placeholder(R.mipmap.ic_launcher_round)
                 .override(140, 140)
                 .bitmapTransform(new CropCircleTransformation(new MyBitmapPool()))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(img);
     }
 
@@ -36,8 +37,22 @@ public class MyImgShow {
                 .error(R.mipmap.ic_launcher_round)
                 .placeholder(R.mipmap.ic_launcher_round)
                 .dontAnimate()
+                .thumbnail(0.1f)
+                .override(400, 300)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .fitCenter()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(img);
+    }
+
+    public static void showCompleteImgSquare(Context context, String url, ImageView img){
+        Glide.with(context)
+                .load(url)
+                .error(R.mipmap.ic_launcher_round)
+                .placeholder(R.mipmap.ic_launcher_round)
+                .dontAnimate()
+                .thumbnail(0.1f)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .fitCenter()
                 .into(img);
     }
 
@@ -48,7 +63,17 @@ public class MyImgShow {
                 .override(140, 140)
                 .placeholder(R.mipmap.ic_launcher_round)
                 .bitmapTransform(new CropCircleTransformation(new MyBitmapPool()))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(img);
+    }
+
+    public static void showNetImgSquare(Context context, String url, ImageView img){
+        Glide.with(context)
+                .load(url)
+                .dontAnimate()
+                .override(100, 75)
+                .bitmapTransform(new CornersTransform(context,15))
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(img);
     }
 
@@ -59,7 +84,7 @@ public class MyImgShow {
                 .override(140, 140)
                 .placeholder(R.mipmap.ic_launcher_round)
                 .bitmapTransform(new CropCircleTransformation(new MyBitmapPool()))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(img);
     }
 
@@ -70,7 +95,7 @@ public class MyImgShow {
                 .override(140, 140)
                 .placeholder(R.mipmap.ic_launcher_round)
                 .bitmapTransform(new CropCircleTransformation(new MyBitmapPool()))
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(img);
     }
 

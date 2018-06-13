@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:id="@+id/header"
         android:layout_height="70dp"
-        android:background="@color/color_cheng"
+        android:background="@drawable/gardient_header"
         android:fitsSystemWindows="true">
         <TextView
             android:layout_width="match_parent"
@@ -16,7 +16,6 @@
             android:gravity="center"
             android:textColor="@color/white"
             android:textSize="17sp"
-            android:textStyle="bold"
             android:id="@+id/txt_toname"/>
         <ImageButton
             android:layout_width="50dp"

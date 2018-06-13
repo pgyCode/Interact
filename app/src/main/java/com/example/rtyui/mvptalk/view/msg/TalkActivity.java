@@ -27,8 +27,10 @@ import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVFile;
+import com.avos.avoscloud.ProgressCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.example.rtyui.mvptalk.R;
+import com.example.rtyui.mvptalk.adapter.MsgAdapter;
 import com.example.rtyui.mvptalk.adapter.TalkAdapter;
 import com.example.rtyui.mvptalk.bean.ChatBean;
 import com.example.rtyui.mvptalk.model.AccountModel;
@@ -111,7 +113,10 @@ public class TalkActivity extends Activity{
             public void onClick(View v) {
                 if (edtMsg.getText().toString().trim().equals("")){
                 }else {
-                    doSend(App.MSG_CHAT + edtMsg.getText().toString());
+                    final ChatBean chatBean = new ChatBean(userId, AccountModel.getInstance().currentUser.id, App.MSG_CHAT + edtMsg.getText().toString(), AccountModel.getInstance().currentUser.nickname, AccountModel.getInstance().currentUser.headImgUrl, FriendModel.getInstance().getUserById(userId).nickname, FriendModel.getInstance().getUserById(userId).headImgUrl, System.currentTimeMillis());
+                    final int position = MsgModel.getInstance().addSend(chatBean);
+                    MsgModel.getInstance().actListeners();
+                    doSend(chatBean, position);
                 }
             }
         });
@@ -164,12 +169,20 @@ public class TalkActivity extends Activity{
         super.onNewIntent(intent);
         String temp = intent.getStringExtra("path");
         if (temp != null) {
+            final ChatBean chatBean = new ChatBean(userId, AccountModel.getInstance().currentUser.id, App.MSG_IMG + "file://" + temp, AccountModel.getInstance().currentUser.nickname, AccountModel.getInstance().currentUser.headImgUrl, FriendModel.getInstance().getUserById(userId).nickname, FriendModel.getInstance().getUserById(userId).headImgUrl, System.currentTimeMillis());
+            final int position = MsgModel.getInstance().addSend(chatBean);
+            MsgModel.getInstance().actListeners();
             try {
                 final AVFile file = AVFile.withAbsoluteLocalPath("LeanCloud.png", temp);
                 file.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(AVException e) {
-                        doSend(App.MSG_IMG + file.getUrl());
+                        doSend(new ChatBean(userId, AccountModel.getInstance().currentUser.id, App.MSG_IMG + file.getUrl(), AccountModel.getInstance().currentUser.nickname, AccountModel.getInstance().currentUser.headImgUrl, FriendModel.getInstance().getUserById(userId).nickname, FriendModel.getInstance().getUserById(userId).headImgUrl, chatBean.time), position);
+                    }
+                }, new ProgressCallback() {
+                    @Override
+                    public void done(Integer integer) {
+
                     }
                 });
             } catch (FileNotFoundException e) {
@@ -178,12 +191,11 @@ public class TalkActivity extends Activity{
         }
     }
 
-    public void doSend(String msg) {
-        ChatBean chatBean = new ChatBean(userId, AccountModel.getInstance().currentUser.id, msg, AccountModel.getInstance().currentUser.nickname, AccountModel.getInstance().currentUser.headImgUrl, FriendModel.getInstance().getUserById(userId).nickname, FriendModel.getInstance().getUserById(userId).headImgUrl, System.currentTimeMillis());
+    public void doSend(ChatBean chatBean, int position) {
         Intent intent = new Intent(App.SEND_CHAT_ACTION);
         intent.putExtra("data", new Gson().toJson(chatBean));
         intent.putExtra("id", userId);
-        intent.putExtra("position", MsgModel.getInstance().addSend(chatBean));
+        intent.putExtra("position", position);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(TalkActivity.this);
         localBroadcastManager.sendBroadcast(intent);
         edtMsg.setText("");

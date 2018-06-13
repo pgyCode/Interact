@@ -51,6 +51,14 @@ public class NewFriendActivity extends Activity {
 
         lst = findViewById(R.id.lst);
 
+
+        findViewById(R.id.btn_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         lst.setAdapter(adapter = new FriendPageAdapter(this, new FriendPageAdapter.OnActionListener() {
             @Override
             public void doAgree(final int position) {

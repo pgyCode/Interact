@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -91,7 +92,7 @@ public class ChooseAlbumActivity extends Activity {
             else
                 viewHolder = (ViewHolder) convertView.getTag();
 
-            viewHolder.path.setText((String)albums.keySet().toArray()[position]);
+            viewHolder.path.setText(((String)albums.keySet().toArray()[position]));
             MyImgShow.showLocalImgSquare(ChooseAlbumActivity.this, "file://" + albums.get(albums.keySet().toArray()[position]).get(0), viewHolder.img);
             return convertView;
         }

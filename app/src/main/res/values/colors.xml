@@ -20,4 +20,11 @@
     <color name="color_truegrew">#ff999999</color>
     <color name="color_cheng">#ff6633</color>
     <color name="color_blue">#99cccc</color>
+
+    <color name="T_color_diban_hui">#f8f8f8</color>
+    <color name="T_color_talk_hui">#ecedf1</color>
+    <color name="T_color_header_orange">#fb6e30</color>
+    <color name="T_color_header_pink">#fa5185</color>
+    <color name="T_color_txt_grew">#7b7b7b</color>
+    <color name="T_color_btn_juhong">#f04f43</color>
 </resources>

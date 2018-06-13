@@ -132,7 +132,7 @@ public class ChoosePhotoActivity extends Activity {
             else
                 viewHolder = (ViewHolder) convertView.getTag();
 
-            viewHolder.path.setText(photos.get(position));
+            viewHolder.path.setText(photos.get(position).replace(Environment.getExternalStorageDirectory().getPath() + "/", ""));
             MyImgShow.showLocalImgSquare(ChoosePhotoActivity.this, "file://" + photos.get(position), viewHolder.img);
             return convertView;
         }

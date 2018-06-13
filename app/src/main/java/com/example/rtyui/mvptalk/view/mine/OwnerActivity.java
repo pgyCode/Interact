@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.example.rtyui.mvptalk.R;
 import com.example.rtyui.mvptalk.model.AccountModel;
 import com.example.rtyui.mvptalk.parent.OnModelChangeListener;
+import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.MyImgShow;
 
 import java.lang.ref.WeakReference;
@@ -58,11 +59,15 @@ public class OwnerActivity extends Activity {
                                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
                     }else {
                         Toast.makeText(OwnerActivity.this, "权限已申请", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(OwnerActivity.this, ChooseAlbumActivity.class));
+                        Intent intent = new Intent(OwnerActivity.this, ChooseAlbumActivity.class);
+                        intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_CUTIMG);
+                        startActivity(intent);
                     }
                 }
                 else{
-                    startActivity(new Intent(OwnerActivity.this, ChooseAlbumActivity.class));
+                    Intent intent = new Intent(OwnerActivity.this, ChooseAlbumActivity.class);
+                    intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_CUTIMG);
+                    startActivity(intent);
                 }
             }
         });
@@ -97,7 +102,9 @@ public class OwnerActivity extends Activity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     Toast.makeText(this, "权限已申请", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(OwnerActivity.this, ChooseAlbumActivity.class));
+                    Intent intent = new Intent(OwnerActivity.this, ChooseAlbumActivity.class);
+                    intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_CUTIMG);
+                    startActivity(intent);
                 }else{
                     AlertDialog.Builder dialog = new AlertDialog.Builder(this).setTitle("权限申请").setMessage("为了能够设设置头像，请允许我们使用读取文件权限")
                             .setPositiveButton("立即开启", new DialogInterface.OnClickListener() {

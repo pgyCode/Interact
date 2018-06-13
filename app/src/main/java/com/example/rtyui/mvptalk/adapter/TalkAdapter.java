@@ -1,6 +1,7 @@
 package com.example.rtyui.mvptalk.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import com.example.rtyui.mvptalk.model.FriendModel;
 import com.example.rtyui.mvptalk.model.MsgModel;
 import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.MyImgShow;
+import com.example.rtyui.mvptalk.view.common.ImgShowActivity;
 
 import java.util.List;
 
@@ -65,7 +67,7 @@ public class TalkAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         //ViewHolder viewHolder = null;
-        ChatBean bean = MsgModel.getInstance().getCombeanById(id).chats.get(position);
+        final ChatBean bean = MsgModel.getInstance().getCombeanById(id).chats.get(position);
         //自己发出的消息
         if (bean.sendId == AccountModel.getInstance().currentUser.id){
             if (bean.msg.startsWith(App.MSG_CHAT)){
@@ -95,7 +97,17 @@ public class TalkAdapter extends BaseAdapter {
                 ImageView imgContent = convertView.findViewById(R.id.img_content);
                 ImageView imgHead = convertView.findViewById(R.id.img_head);
                 ImageView imgStatu = convertView.findViewById(R.id.img_statu);
-                MyImgShow.showLocalImgSquare(context, bean.msg.replace(App.MSG_IMG, ""), imgContent);
+                MyImgShow.showNetImgSquare(context, bean.msg.replace(App.MSG_IMG, ""), imgContent);
+
+                imgContent.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, ImgShowActivity.class);
+                        intent.putExtra("path", bean.msg.replace(App.MSG_IMG, ""));
+                        context.startActivity(intent);
+                    }
+                });
+
                 MyImgShow.showNetImgCircle(context, AccountModel.getInstance().currentUser.headImgUrl, imgHead);
                 switch (bean.statu){
                     case App.MSG_SEND_ING:
@@ -128,8 +140,16 @@ public class TalkAdapter extends BaseAdapter {
                 convertView = LayoutInflater.from(context).inflate(R.layout.talk_other_img, null, false);
                 ImageView imgContent = convertView.findViewById(R.id.img_content);
                 ImageView imgHead = convertView.findViewById(R.id.img_head);
-                MyImgShow.showLocalImgSquare(context, bean.msg.replace(App.MSG_IMG, ""), imgContent);
-                MyImgShow.showNetImgCircle(context, AccountModel.getInstance().currentUser.headImgUrl, imgHead);
+                MyImgShow.showNetImgSquare(context, bean.msg.replace(App.MSG_IMG, ""), imgContent);
+                MyImgShow.showNetImgCircle(context, FriendModel.getInstance().getUserById(bean.sendId).headImgUrl, imgHead);
+                imgContent.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, ImgShowActivity.class);
+                        intent.putExtra("path", bean.msg.replace(App.MSG_IMG, ""));
+                        context.startActivity(intent);
+                    }
+                });
             }else{
 
             }
