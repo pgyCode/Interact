@@ -34,6 +34,11 @@ public class MySqliteHelper {
         return instance;
     }
 
+
+    public static synchronized void dstroyInstance() {
+        if (instance != null) instance = null;
+    }
+
     public MySqliteHelper(){
         sqLiteDatabase = App.context.openOrCreateDatabase("data.db",MODE_PRIVATE,null);
     }

@@ -66,7 +66,7 @@ public class AddFriendActivity extends Activity{
         loading.setVisibility(View.GONE);
         switch (code){
             case NET_FAil:
-                Toast.makeText(this, "发送好友请求失败", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "可能对方已经收到你的好友请求了哦", Toast.LENGTH_SHORT).show();
                 break;
             case LOGIN_SUCCEED:
                 Toast.makeText(this, "请求成功，请等待", Toast.LENGTH_SHORT).show();

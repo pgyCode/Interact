@@ -30,6 +30,8 @@ import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.MyImgShow;
 import com.example.rtyui.mvptalk.tool.MyLocalObject;
 import com.example.rtyui.mvptalk.tool.MySqliteHelper;
+import com.example.rtyui.mvptalk.tool.NetTaskCode;
+import com.example.rtyui.mvptalk.tool.NetTaskCodeListener;
 import com.example.rtyui.mvptalk.view.friend.FriendFragment;
 import com.example.rtyui.mvptalk.view.friend.NewFriendActivity;
 import com.example.rtyui.mvptalk.view.msg.MsgFragment;
@@ -60,7 +62,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        MySqliteHelper.getInstance().mkTable(ChatBean.class);
 
         continueRecvBroadcastReceiver = new ContinueRecvBroadcastReceiver();
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
@@ -79,13 +81,51 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "talk:socket");
         wl.acquire();
+
+        new NetTaskCode(new NetTaskCodeListener() {
+            @Override
+            public void before() { }
+
+            @Override
+            public int middle() {
+                FriendModel.getInstance().init();
+                MsgModel.getInstance().init();
+                return 0;
+            }
+
+            @Override
+            public void after(int code) {
+                MsgModel.getInstance().actListeners();
+                FriendModel.getInstance().actListeners();
+            }
+        }).execute();
+
+
+        new NetTaskCode(new NetTaskCodeListener() {
+            @Override
+            public void before() { }
+
+            @Override
+            public int middle() {
+                FriendModel.getInstance().flush();
+                MsgModel.getInstance().doFlush();
+                RequestModel.getInstance().loadRequest();
+                return 0;
+            }
+
+            @Override
+            public void after(int code) {
+                MsgModel.getInstance().actListeners();
+                FriendModel.getInstance().actListeners();
+                RequestModel.getInstance().actListeners();
+            }
+        }).execute();
     }
 
 
     private void initLayout(){
         txtTitle = findViewById(R.id.txt_title);
 
-        MySqliteHelper.getInstance().mkTable(ChatBean.class);
 
         msgFrag = new MsgFragment();
         friendFrag = new FriendFragment();

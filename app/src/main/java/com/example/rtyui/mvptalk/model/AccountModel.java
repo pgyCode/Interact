@@ -33,11 +33,12 @@ public class AccountModel extends Model {
         }
     }
 
+    public static synchronized void dstroyInstance() {
+        if (instance != null) instance = null;
+    }
 
-    /**
-     * 初始化
-     */
-    public AccountModel(){
+
+    public void init(){
         SharedPreferences sharedPreferences = App.context.getSharedPreferences("currentUser", MODE_PRIVATE);
         if (System.currentTimeMillis() - sharedPreferences.getLong("lastLogin", -1) < App.ACCOUNT_TIME){
             currentUser = new UserBean(
@@ -107,6 +108,15 @@ public class AccountModel extends Model {
                 putString("headImgUrl", currentUser.headImgUrl).
                 putString("nickname", currentUser.nickname).
                 commit();
+    }
+
+    /**
+     * 清理本地账号
+     */
+    public void clearAccountLocal(){
+        this.currentUser = null;
+        SharedPreferences sharedPreferences = App.context.getSharedPreferences("currentUser", MODE_PRIVATE);
+        sharedPreferences.edit().clear().commit();
     }
 
     /**

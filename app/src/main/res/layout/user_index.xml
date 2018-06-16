@@ -74,8 +74,8 @@
     </RelativeLayout>
 
     <ImageView
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
         android:id="@+id/img_head"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="163dp"

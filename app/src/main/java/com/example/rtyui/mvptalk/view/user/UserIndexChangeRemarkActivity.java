@@ -81,6 +81,7 @@ public class UserIndexChangeRemarkActivity extends Activity {
                 break;
             case NET_SUCCEED:
                 Toast.makeText(this, "更改成功", Toast.LENGTH_SHORT).show();
+                finish();
                 break;
         }
     }

@@ -40,9 +40,13 @@ public class FriendModel extends Model {
         return instance;
     }
 
-    public FriendModel(){
+    public static synchronized void dstroyInstance() {
+        if (instance != null) instance = null;
+    }
+
+    public void init(){
         if (AccountModel.getInstance().currentUser != null) {
-            linkFriends = (List<UserBean>) MyLocalObject.getObject("linkFriends");
+            linkFriends = (List<UserBean>) MyLocalObject.getObject("linkFriends_" + AccountModel.getInstance().currentUser.id);
         }
     }
 
@@ -71,8 +75,10 @@ public class FriendModel extends Model {
             String temp = NetVisitor.postNormal(App.host + "Talk/friend/getAllFri?", "userId=" +
                     AccountModel.getInstance().currentUser.id);
             MsgLinkFriend msg = new Gson().fromJson(temp, MsgLinkFriend.class);
-            linkFriends = msg.data;
-            MyLocalObject.saveObject("linkFriends", linkFriends);
+            if (msg.code == App.NET_SUCCEED){
+                linkFriends = msg.data;
+                MyLocalObject.saveObject("linkFriends_" + AccountModel.getInstance().currentUser.id, linkFriends);
+            }
             return msg.code;
         }
         catch(Exception e){
@@ -98,7 +104,7 @@ public class FriendModel extends Model {
             if (msg.code == App.NET_SUCCEED)
             {
                 FriendModel.getInstance().getUserById(id).nickname = remark;
-                MyLocalObject.saveObject("linkFriends", linkFriends);
+                MyLocalObject.saveObject("linkFriends_" + AccountModel.getInstance().currentUser.id, linkFriends);
             }
             return msg.code;
         }
@@ -129,7 +135,7 @@ public class FriendModel extends Model {
                         id +
                         " or sendId=" +
                         id);
-                MyLocalObject.saveObject("linkFriends", linkFriends);
+                MyLocalObject.saveObject("linkFriends_" + AccountModel.getInstance().currentUser.id, linkFriends);
             }
             return msg.code;
         }catch (Exception e){

@@ -11,10 +11,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.rtyui.mvptalk.Msg.Msg;
 import com.example.rtyui.mvptalk.R;
 import com.example.rtyui.mvptalk.model.AccountModel;
+import com.example.rtyui.mvptalk.model.FriendModel;
+import com.example.rtyui.mvptalk.model.MsgModel;
+import com.example.rtyui.mvptalk.model.RequestModel;
 import com.example.rtyui.mvptalk.parent.OnModelChangeListener;
 import com.example.rtyui.mvptalk.tool.MyImgShow;
+import com.example.rtyui.mvptalk.tool.MySqliteHelper;
 import com.example.rtyui.mvptalk.view.mine.OwnerActivity;
 
 import java.lang.ref.WeakReference;
@@ -58,6 +63,19 @@ public class LeafFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 LeafFragment.this.getActivity().finish();
+            }
+        });
+
+        root.findViewById(R.id.btn_clear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LeafFragment.this.getActivity().finish();
+                AccountModel.getInstance().clearAccountLocal();
+                AccountModel.dstroyInstance();
+                FriendModel.dstroyInstance();
+                MsgModel.dstroyInstance();
+                RequestModel.dstroyInstance();
+                MySqliteHelper.dstroyInstance();
             }
         });
 

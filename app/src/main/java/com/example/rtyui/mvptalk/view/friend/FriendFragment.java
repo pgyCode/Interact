@@ -77,9 +77,9 @@ public class FriendFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public boolean load_PullRefresh() {
-                FriendModel.getInstance().flush();
-                RequestModel.getInstance().loadRequest();
-                return true;
+                int a = FriendModel.getInstance().flush();
+                int b = RequestModel.getInstance().loadRequest();
+                return a == App.NET_SUCCEED && b == App.NET_SUCCEED;
             }
 
             @Override
@@ -99,37 +99,6 @@ public class FriendFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent);
             }
         });
-
-        new NetTaskCode(new NetTaskCodeListener() {
-            @Override
-            public void before() { }
-
-            @Override
-            public int middle() {
-                return FriendModel.getInstance().flush();
-            }
-
-            @Override
-            public void after(int code) {
-                FriendModel.getInstance().actListeners();
-            }
-        }).execute();
-
-
-        new NetTaskCode(new NetTaskCodeListener() {
-            @Override
-            public void before() { }
-
-            @Override
-            public int middle() {
-                return RequestModel.getInstance().loadRequest();
-            }
-
-            @Override
-            public void after(int code) {
-                RequestModel.getInstance().actListeners();
-            }
-        }).execute();
         return root;
     }
 

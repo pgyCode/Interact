@@ -87,12 +87,14 @@ public class ChooseAlbumActivity extends Activity {
                 viewHolder = new ViewHolder();
                 viewHolder.path = convertView.findViewById(R.id.path);
                 viewHolder.img = convertView.findViewById(R.id.img);
+                viewHolder.size = convertView.findViewById(R.id.size);
                 convertView.setTag(viewHolder);
             }
             else
                 viewHolder = (ViewHolder) convertView.getTag();
 
-            viewHolder.path.setText(((String)albums.keySet().toArray()[position]));
+            viewHolder.size.setText("此相册共有：" + albums.get(albums.keySet().toArray()[position]).size() + "张");
+            viewHolder.path.setText(((String)albums.keySet().toArray()[position]).replace(Environment.getExternalStorageDirectory().getPath() + "/", ""));
             MyImgShow.showLocalImgSquare(ChooseAlbumActivity.this, "file://" + albums.get(albums.keySet().toArray()[position]).get(0), viewHolder.img);
             return convertView;
         }
@@ -100,6 +102,7 @@ public class ChooseAlbumActivity extends Activity {
         public class ViewHolder {
             TextView path;
             ImageView img;
+            TextView size;
         }
     }
 
@@ -123,7 +126,7 @@ public class ChooseAlbumActivity extends Activity {
             File file = new File(path);
             if (file.exists())
             {
-                String fatherPath = path.substring(0, path.lastIndexOf('/') - 1);
+                String fatherPath = path.substring(0, path.lastIndexOf('/'));
                 if (temps.get(fatherPath) == null){
                     temps.put(fatherPath, new ArrayList<String>());
                 }

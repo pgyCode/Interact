@@ -28,8 +28,15 @@ public class MsgModel extends Model {
             instance = new MsgModel();
         return instance;
     }
+    public static synchronized void dstroyInstance() {
+        if (instance != null) instance = null;
+    }
 
     private MsgModel(){
+    }
+
+
+    public void init(){
         comBeans = new LinkedList<>();
         if (AccountModel.getInstance().currentUser != null){
             List<ChatBean> chatBeans = MySqliteHelper.getInstance().getAll(ChatBean.class);
@@ -40,15 +47,6 @@ public class MsgModel extends Model {
     }
 
     public List<ComBean> comBeans;
-
-    /**
-     * 辅助函数 将自己发出的消息临时添加
-     * @param chatBean
-     * @return 这条消息的位置
-     */
-    public int addSend(ChatBean chatBean){
-        return add(chatBean).chats.size() - 1;
-    }
 
     /**
      * 辅助函数 添加未读取的消息
@@ -139,5 +137,16 @@ public class MsgModel extends Model {
             sum += comBeans.get(i).unread;
         }
         return sum;
+    }
+
+    //更改消息状态
+    public void changeStatu(long time,int statu){
+        MySqliteHelper.getInstance().update(ChatBean.class, " statu =" + statu, " time =" + time );
+        for (int i = 0; i < comBeans.size(); i++){
+            for (int j = 0; j < comBeans.get(i).chats.size(); j++){
+                if (comBeans.get(i).chats.get(j).time == time)
+                    comBeans.get(i).chats.get(j).statu = statu;
+            }
+        }
     }
 }

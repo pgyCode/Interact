@@ -37,8 +37,7 @@ public class MyImgShow {
                 .error(R.mipmap.ic_launcher_round)
                 .placeholder(R.mipmap.ic_launcher_round)
                 .dontAnimate()
-                .thumbnail(0.1f)
-                .override(400, 300)
+                .override(200, 200)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .fitCenter()
                 .into(img);

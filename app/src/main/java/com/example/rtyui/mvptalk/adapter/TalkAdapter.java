@@ -23,6 +23,7 @@ import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.MyImgShow;
 import com.example.rtyui.mvptalk.view.common.ImgShowActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -75,6 +76,13 @@ public class TalkAdapter extends BaseAdapter {
                 TextView txtMsg = convertView.findViewById(R.id.txt_msg);
                 ImageView imgHead = convertView.findViewById(R.id.img_head);
                 ImageView imgStatu = convertView.findViewById(R.id.img_statu);
+                TextView txtTime = convertView.findViewById(R.id.txt_time);
+                txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(bean.time));
+                if (position == 0 || bean.time - MsgModel.getInstance().getCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
+                    txtTime.setVisibility(View.VISIBLE);
+                }else{
+                    txtTime.setVisibility(View.GONE);
+                }
                 txtMsg.setText(bean.msg.replace(App.MSG_CHAT, ""));
                 MyImgShow.showNetImgCircle(context, AccountModel.getInstance().currentUser.headImgUrl, imgHead);
                 switch (bean.statu){
@@ -97,6 +105,13 @@ public class TalkAdapter extends BaseAdapter {
                 ImageView imgContent = convertView.findViewById(R.id.img_content);
                 ImageView imgHead = convertView.findViewById(R.id.img_head);
                 ImageView imgStatu = convertView.findViewById(R.id.img_statu);
+                TextView txtTime = convertView.findViewById(R.id.txt_time);
+                txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(bean.time));
+                if (position == 0 || bean.time - MsgModel.getInstance().getCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
+                    txtTime.setVisibility(View.VISIBLE);
+                }else{
+                    txtTime.setVisibility(View.GONE);
+                }
                 MyImgShow.showNetImgSquare(context, bean.msg.replace(App.MSG_IMG, ""), imgContent);
 
                 imgContent.setOnClickListener(new View.OnClickListener() {
@@ -134,6 +149,13 @@ public class TalkAdapter extends BaseAdapter {
                 TextView txtMsg = convertView.findViewById(R.id.txt_msg);
                 ImageView imgHead = convertView.findViewById(R.id.img_head);
                 txtMsg.setText(bean.msg.replace(App.MSG_CHAT, ""));
+                TextView txtTime = convertView.findViewById(R.id.txt_time);
+                txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(bean.time));
+                if (position == 0 || bean.time - MsgModel.getInstance().getCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
+                    txtTime.setVisibility(View.VISIBLE);
+                }else{
+                    txtTime.setVisibility(View.GONE);
+                }
                 MyImgShow.showNetImgCircle(context, FriendModel.getInstance().getUserById(bean.sendId).headImgUrl, imgHead);
             }
             else if(bean.msg.startsWith(App.MSG_IMG)){
@@ -141,6 +163,13 @@ public class TalkAdapter extends BaseAdapter {
                 ImageView imgContent = convertView.findViewById(R.id.img_content);
                 ImageView imgHead = convertView.findViewById(R.id.img_head);
                 MyImgShow.showNetImgSquare(context, bean.msg.replace(App.MSG_IMG, ""), imgContent);
+                TextView txtTime = convertView.findViewById(R.id.txt_time);
+                txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(bean.time));
+                if (position == 0 || bean.time - MsgModel.getInstance().getCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
+                    txtTime.setVisibility(View.VISIBLE);
+                }else{
+                    txtTime.setVisibility(View.GONE);
+                }
                 MyImgShow.showNetImgCircle(context, FriendModel.getInstance().getUserById(bean.sendId).headImgUrl, imgHead);
                 imgContent.setOnClickListener(new View.OnClickListener() {
                     @Override

@@ -68,21 +68,23 @@ public class App extends Application {
 
     public static final long ACCOUNT_TIME = 1000 * 60 * 60 * 24 * 7;
 
+
+    //聊天界面时间显示间隔
+    public static final long TALK_TIME_SPACE = 1000 * 60 * 1;
+
     @Override
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-
-        //初始化model
-        AccountModel.getInstance();
-        FriendModel.getInstance();
-        MsgModel.getInstance();
 
         //解决截图问题
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
         }
+
+        //初始化用户信息 为了自动登陆
+        AccountModel.getInstance().init();
 
         //初始化文件存储
         AVOSCloud.initialize(this,"X6aWf1qqQOkrgD1SvqKBLGmq-gzGzoHsz","fKEMg2bN07e2xxdIAxqQzd8S");

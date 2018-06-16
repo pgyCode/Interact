@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -44,7 +45,7 @@ import java.util.List;
 
 public class ChoosePhotoActivity extends Activity {
 
-    private ListView lst;
+    private GridView grid;
 
     private List<String> photos;
     private final int CROP_HEADIMG = 100002;
@@ -56,15 +57,15 @@ public class ChoosePhotoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mine_choose_photo);
 
-        lst = findViewById(R.id.lst);
+        grid = findViewById(R.id.grid);
 
         loading = findViewById(R.id.loading);
 
         photos = (List<String>) getIntent().getSerializableExtra("photos");
 
-        lst.setAdapter(new MyAdapter());
+        grid.setAdapter(new MyAdapter());
 
-        lst.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -123,22 +124,22 @@ public class ChoosePhotoActivity extends Activity {
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder = null;
             if (convertView == null){
-                convertView = LayoutInflater.from(ChoosePhotoActivity.this).inflate(R.layout.own_album_item, null, false);
+                convertView = LayoutInflater.from(ChoosePhotoActivity.this).inflate(R.layout.own_photo_item, grid, false);
                 viewHolder = new ViewHolder();
-                viewHolder.path = convertView.findViewById(R.id.path);
+                //viewHolder.path = convertView.findViewById(R.id.path);
                 viewHolder.img = convertView.findViewById(R.id.img);
                 convertView.setTag(viewHolder);
             }
             else
                 viewHolder = (ViewHolder) convertView.getTag();
 
-            viewHolder.path.setText(photos.get(position).replace(Environment.getExternalStorageDirectory().getPath() + "/", ""));
+            //viewHolder.path.setText(photos.get(position).replace(Environment.getExternalStorageDirectory().getPath() + "/", ""));
             MyImgShow.showLocalImgSquare(ChoosePhotoActivity.this, "file://" + photos.get(position), viewHolder.img);
             return convertView;
         }
 
         public class ViewHolder {
-            TextView path;
+            //TextView path;
             ImageView img;
         }
     }

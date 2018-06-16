@@ -40,82 +40,92 @@
             android:padding="15dp"/>
     </RelativeLayout>
 
-    <ListView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:id="@+id/lst"
-        android:transcriptMode="alwaysScroll"
-        android:background="@color/T_color_talk_hui"
-        android:divider="@null"
-        android:layout_below="@id/header"
-        android:layout_above="@+id/footer"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/header">
+        <ListView
+            android:layout_width="match_parent"
+            android:id="@+id/lst"
+            android:transcriptMode="alwaysScroll"
+            android:background="@color/T_color_talk_hui"
+            android:divider="@null"
+            android:layout_above="@+id/footer"
+            android:layout_height="match_parent">
 
-        <!--android:stackFromBottom="true"-->
-    </ListView>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:minHeight="80dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/T_color_talk_hui"
-        android:id="@+id/footer"
-        android:orientation="vertical">
+            <!--android:stackFromBottom="true"-->
+        </ListView>
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="horizontal"
+            android:minHeight="80dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:minHeight="40dp">
-            <EditText
-                android:layout_width="0px"
-                android:layout_weight="1"
-                android:layout_toLeftOf="@id/btn_send"
-                android:id="@+id/edt_msg"
-                android:textSize="15dp"
-                android:paddingTop="5dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/T_color_talk_hui"
+            android:id="@+id/footer"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:maxLines="5"
-                android:paddingBottom="5dp"
-                android:layout_marginTop="5dp"
-                android:paddingLeft="5dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/edt_msg_bg"
-                android:layout_alignParentBottom="true"
-                android:minHeight="35dp" />
+                android:gravity="center_vertical"
+                android:minHeight="40dp">
+                <EditText
+                    android:layout_width="0px"
+                    android:layout_weight="1"
+                    android:layout_toLeftOf="@id/btn_send"
+                    android:id="@+id/edt_msg"
+                    android:textSize="15dp"
+                    android:paddingTop="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:maxLines="5"
+                    android:paddingBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:paddingLeft="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/edt_msg_bg"
+                    android:layout_alignParentBottom="true"
+                    android:minHeight="35dp" />
 
-            <Button
-                android:id="@+id/btn_send"
-                android:layout_width="60dp"
-                android:layout_height="35dp"
-                android:layout_gravity="bottom"
-                android:layout_marginRight="3dp"
-                android:background="@drawable/juhong_radius_bg"
-                android:layout_marginBottom="3dp"
-                android:text="发 送"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+                <Button
+                    android:id="@+id/btn_send"
+                    android:layout_width="60dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginRight="3dp"
+                    android:background="@drawable/juhong_radius_bg"
+                    android:layout_marginBottom="3dp"
+                    android:text="发 送"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <ImageButton
+                    android:layout_width="60dp"
+                    android:scaleType="fitCenter"
+                    android:layout_height="40dp"
+                    android:background="@color/touming"
+                    android:src="@drawable/talk_img"
+                    android:id="@+id/btn_img"/>
+                <ImageButton
+                    android:layout_width="60dp"
+                    android:scaleType="fitCenter"
+                    android:layout_height="40dp"
+                    android:background="@color/touming"
+                    android:src="@drawable/talk_file"
+                    android:id="@+id/btn_file"/>
+            </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:orientation="horizontal">
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:text="图片"
-                android:id="@+id/btn_img"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:text="文件"
-                android:id="@+id/btn_file"/>
-        </LinearLayout>
+    </RelativeLayout>
 
-    </LinearLayout>
 
     <requestFocus/>
 </RelativeLayout>

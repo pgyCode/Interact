@@ -31,14 +31,15 @@
     </RelativeLayout>
 
 
-    <ListView
+    <GridView
         android:layout_width="match_parent"
-        android:id="@+id/lst"
+        android:id="@+id/grid"
+        android:numColumns="4"
         android:scrollbars="none"
         android:layout_below="@id/header"
         android:layout_height="match_parent">
 
-    </ListView>
+    </GridView>
 
     <ViewStub
         android:layout_width="match_parent"

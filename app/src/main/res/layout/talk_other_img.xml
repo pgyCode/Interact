@@ -3,11 +3,20 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:minHeight="60dp"
     android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:id="@+id/txt_time"
+        android:textColor="@color/T_color_txt_grew"
+        android:text="时间"/>
 
     <ImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:id="@+id/img_head"
+        android:layout_below="@id/txt_time"
         android:scaleType="fitXY"
         android:layout_alignParentLeft="true"
         android:src="@mipmap/ic_launcher"
@@ -18,6 +27,7 @@
         android:adjustViewBounds="true"
         android:layout_height="120dp"
         android:maxHeight="150dp"
+        android:layout_below="@id/txt_time"
         android:maxWidth="200dp"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"

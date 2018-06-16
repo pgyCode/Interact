@@ -23,6 +23,9 @@ public class RequestModel extends Model {
             instance = new RequestModel();
         return instance;
     }
+    public static synchronized void dstroyInstance() {
+        if (instance != null) instance = null;
+    }
 
 
 

@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
     <ImageView
         android:layout_width="match_parent"
-        android:background="@color/blackB"
+        android:background="@color/black"
         android:id="@+id/img"
         android:scaleType="fitCenter"
         android:layout_height="match_parent" />
