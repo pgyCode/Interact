@@ -1,8 +1,11 @@
 package com.example.rtyui.mvptalk.view.own;
 
 import android.accounts.Account;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -20,8 +23,10 @@ import com.example.rtyui.mvptalk.model.RequestModel;
 import com.example.rtyui.mvptalk.parent.OnModelChangeListener;
 import com.example.rtyui.mvptalk.tool.MyImgShow;
 import com.example.rtyui.mvptalk.tool.MySqliteHelper;
+import com.example.rtyui.mvptalk.view.common.FileChooseActivity;
 import com.example.rtyui.mvptalk.view.mine.OwnerActivity;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 
 /**
@@ -76,6 +81,15 @@ public class LeafFragment extends Fragment {
                 MsgModel.dstroyInstance();
                 RequestModel.dstroyInstance();
                 MySqliteHelper.dstroyInstance();
+            }
+        });
+
+        root.findViewById(R.id.btn_folder).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LeafFragment.this.getContext(), FileChooseActivity.class);
+                intent.putExtra("path", Environment.getExternalStorageDirectory().getPath() + "/interact/");
+                startActivity(intent);
             }
         });
 

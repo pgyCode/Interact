@@ -38,6 +38,7 @@ import com.example.rtyui.mvptalk.model.FriendModel;
 import com.example.rtyui.mvptalk.model.MsgModel;
 import com.example.rtyui.mvptalk.parent.OnModelChangeListener;
 import com.example.rtyui.mvptalk.tool.App;
+import com.example.rtyui.mvptalk.view.common.FileChooseActivity;
 import com.example.rtyui.mvptalk.view.main.MainActivity;
 import com.example.rtyui.mvptalk.view.mine.ChooseAlbumActivity;
 import com.example.rtyui.mvptalk.view.user.UserIndexActivity;
@@ -160,6 +161,28 @@ public class TalkActivity extends Activity{
             }
         });
 
+        findViewById(R.id.btn_file).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ActivityCompat.checkSelfPermission(TalkActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        TalkActivity.this.requestPermissions(
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
+                    }else {
+                        Toast.makeText(TalkActivity.this, "权限已申请", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(TalkActivity.this, FileChooseActivity.class);
+                        intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_SENDIMG);
+                        startActivity(intent);
+                    }
+                }
+                else{
+                    Intent intent = new Intent(TalkActivity.this, FileChooseActivity.class);
+                    intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_SENDIMG);
+                    startActivity(intent);
+                }
+            }
+        });
+
         try{MsgModel.getInstance().getCombeanById(userId).unread = 0;}catch(Exception e){};
         listView.setAdapter(talkAdapter = new TalkAdapter(this, userId));
         listView.setSelection(talkAdapter.getCount() - 1);
@@ -169,35 +192,43 @@ public class TalkActivity extends Activity{
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        String temp = intent.getStringExtra("path");
-        if (temp != null) {
-            final ChatBean chatBean = new ChatBean(userId, AccountModel.getInstance().currentUser.id, App.MSG_IMG + "file://" + temp, AccountModel.getInstance().currentUser.nickname, AccountModel.getInstance().currentUser.headImgUrl, FriendModel.getInstance().getUserById(userId).nickname, FriendModel.getInstance().getUserById(userId).headImgUrl, System.currentTimeMillis());
-            MsgModel.getInstance().add(chatBean);
-            MsgModel.getInstance().actListeners();
-            try {
-                final AVFile file = AVFile.withAbsoluteLocalPath("LeanCloud.png", temp);
-                file.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(AVException e) {
-                        if (e == null)
-                            doSend(new ChatBean(userId, AccountModel.getInstance().currentUser.id, App.MSG_IMG + file.getUrl(), AccountModel.getInstance().currentUser.nickname, AccountModel.getInstance().currentUser.headImgUrl, FriendModel.getInstance().getUserById(userId).nickname, FriendModel.getInstance().getUserById(userId).headImgUrl, chatBean.time));
-                        else {
-                            MsgModel.getInstance().changeStatu(chatBean.time, App.MSG_SEND_BAD);
-                            MsgModel.getInstance().actListeners();
-                        }
-                    }
-                }, new ProgressCallback() {
-                    @Override
-                    public void done(Integer integer) {
+        int sign = intent.getIntExtra("choose_sign", -1);
+        switch (sign){
+            case App.CHOOSE_IMG_INTENT:
+                String temp = intent.getStringExtra("path");
+                if (temp != null) {
+                    final ChatBean chatBean = new ChatBean(userId, AccountModel.getInstance().currentUser.id, App.MSG_IMG + "file://" + temp, AccountModel.getInstance().currentUser.nickname, AccountModel.getInstance().currentUser.headImgUrl, FriendModel.getInstance().getUserById(userId).nickname, FriendModel.getInstance().getUserById(userId).headImgUrl, System.currentTimeMillis());
+                    MsgModel.getInstance().add(chatBean);
+                    MsgModel.getInstance().actListeners();
+                    try {
+                        final AVFile file = AVFile.withAbsoluteLocalPath("LeanCloud.png", temp);
+                        file.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(AVException e) {
+                                if (e == null)
+                                    doSend(new ChatBean(userId, AccountModel.getInstance().currentUser.id, App.MSG_IMG + file.getUrl(), AccountModel.getInstance().currentUser.nickname, AccountModel.getInstance().currentUser.headImgUrl, FriendModel.getInstance().getUserById(userId).nickname, FriendModel.getInstance().getUserById(userId).headImgUrl, chatBean.time));
+                                else {
+                                    MsgModel.getInstance().changeStatu(chatBean.time, App.MSG_SEND_BAD);
+                                    MsgModel.getInstance().actListeners();
+                                }
+                            }
+                        }, new ProgressCallback() {
+                            @Override
+                            public void done(Integer integer) {
 
+                            }
+                        });
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        MsgModel.getInstance().changeStatu(chatBean.time, App.MSG_SEND_BAD);
+                        MsgModel.getInstance().actListeners();
                     }
-                });
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                MsgModel.getInstance().changeStatu(chatBean.time, App.MSG_SEND_BAD);
-                MsgModel.getInstance().actListeners();
-            }
+                }
+                break;
+            case App.CHOOSE_FILE_INTENT:
+                break;
         }
+
     }
 
     public void doSend(ChatBean chatBean) {

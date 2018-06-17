@@ -200,7 +200,7 @@ public class MyService extends Service {
                                 dataOutputStream.flush();
                                 MsgModel.getInstance().changeStatu(
                                         new Gson().fromJson(temp, ChatBean.class).time, App.MSG_SEND_GOOD);
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                                 closeSocket();
                                 MsgModel.getInstance().changeStatu(

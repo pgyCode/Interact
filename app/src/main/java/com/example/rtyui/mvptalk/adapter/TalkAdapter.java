@@ -65,7 +65,7 @@ public class TalkAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         //ViewHolder viewHolder = null;
         final ChatBean bean = MsgModel.getInstance().getCombeanById(id).chats.get(position);
@@ -118,7 +118,8 @@ public class TalkAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(context, ImgShowActivity.class);
-                        intent.putExtra("path", bean.msg.replace(App.MSG_IMG, ""));
+                        intent.putExtra("id", id);
+                        intent.putExtra("position", position);
                         context.startActivity(intent);
                     }
                 });
@@ -163,6 +164,15 @@ public class TalkAdapter extends BaseAdapter {
                 ImageView imgContent = convertView.findViewById(R.id.img_content);
                 ImageView imgHead = convertView.findViewById(R.id.img_head);
                 MyImgShow.showNetImgSquare(context, bean.msg.replace(App.MSG_IMG, ""), imgContent);
+                imgContent.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, ImgShowActivity.class);
+                        intent.putExtra("id", id);
+                        intent.putExtra("position", position);
+                        context.startActivity(intent);
+                    }
+                });
                 TextView txtTime = convertView.findViewById(R.id.txt_time);
                 txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(bean.time));
                 if (position == 0 || bean.time - MsgModel.getInstance().getCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
@@ -171,74 +181,11 @@ public class TalkAdapter extends BaseAdapter {
                     txtTime.setVisibility(View.GONE);
                 }
                 MyImgShow.showNetImgCircle(context, FriendModel.getInstance().getUserById(bean.sendId).headImgUrl, imgHead);
-                imgContent.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(context, ImgShowActivity.class);
-                        intent.putExtra("path", bean.msg.replace(App.MSG_IMG, ""));
-                        context.startActivity(intent);
-                    }
-                });
             }else{
 
             }
         }
         return convertView;
-//        ViewHolder viewHolder = null;
-//        if (convertView == null){
-//            viewHolder = new ViewHolder();
-//            if (MsgModel.getInstance().getCombeanById(id).chats.get(position).getSendId() == AccountModel.getInstance().currentUser.id){
-//                convertView = LayoutInflater.from(context).inflate(R.layout.talk_my_item, null, false);
-//                viewHolder.mine = true;
-//            }else{
-//                convertView = LayoutInflater.from(context).inflate(R.layout.talk_other_item, null, false);
-//                viewHolder.mine = false;
-//            }
-//            viewHolder.txtMsg = convertView.findViewById(R.id.txt_msg);
-//            viewHolder.imgHead = convertView.findViewById(R.id.img_head);
-//            viewHolder.imgStatu = convertView.findViewById(R.id.img_statu);
-//            convertView.setTag(viewHolder);
-//        }else{
-//            if ((MsgModel.getInstance().getCombeanById(id).chats.get(position).getSendId() == AccountModel.getInstance().currentUser.id && ((ViewHolder)convertView.getTag()).mine) ||
-//                    (MsgModel.getInstance().getCombeanById(id).chats.get(position).getSendId() != AccountModel.getInstance().currentUser.id && !((ViewHolder)convertView.getTag()).mine)){
-//                viewHolder = (ViewHolder) convertView.getTag();
-//            }else {
-//                viewHolder = new ViewHolder();
-//                if (MsgModel.getInstance().getCombeanById(id).chats.get(position).getSendId() == AccountModel.getInstance().currentUser.id){
-//                    convertView = LayoutInflater.from(context).inflate(R.layout.talk_my_item, null, false);
-//                    viewHolder.mine = true;
-//                }else{
-//                    convertView = LayoutInflater.from(context).inflate(R.layout.talk_other_item, null, false);
-//                    viewHolder.mine = false;
-//                }
-//                viewHolder.txtMsg = convertView.findViewById(R.id.txt_msg);
-//                viewHolder.imgHead = convertView.findViewById(R.id.img_head);
-//                viewHolder.imgStatu = convertView.findViewById(R.id.img_statu);
-//                convertView.setTag(viewHolder);
-//            }
-//        }
-//        if (viewHolder.mine){
-//            switch (MsgModel.getInstance().getCombeanById(id).chats.get(position).statu){
-//                case App.MSG_SEND_ING:
-//                    viewHolder.imgStatu.setVisibility(View.VISIBLE);
-//                    viewHolder.imgStatu.setImageResource(R.drawable.loading_anim);
-//                    AnimationDrawable drawable = (AnimationDrawable) viewHolder.imgStatu.getDrawable();
-//                    drawable.start();
-//                    break;
-//                case App.MSG_SEND_GOOD:
-//                    viewHolder.imgStatu.setVisibility(View.GONE);
-//                    break;
-//                case App.MSG_SEND_BAD:
-//                    viewHolder.imgStatu.setVisibility(View.VISIBLE);
-//                    viewHolder.imgStatu.setImageResource(R.drawable.send_fail);
-//            }
-//            MyImgShow.showNetImgCircle(context, AccountModel.getInstance().currentUser.headImgUrl, viewHolder.imgHead);
-//        }else{
-//            MyImgShow.showNetImgCircle(context, FriendModel.getInstance().getUserById(id).headImgUrl, viewHolder.imgHead);
-//        }
-//
-//        viewHolder.txtMsg.setText(MsgModel.getInstance().getCombeanById(id).chats.get(position).getMsg());
-//        return convertView;
     }
 
 

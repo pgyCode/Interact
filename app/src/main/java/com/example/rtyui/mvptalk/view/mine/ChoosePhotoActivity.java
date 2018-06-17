@@ -87,6 +87,7 @@ public class ChoosePhotoActivity extends Activity {
                         break;
                     case App.PHOTO_CHOOSE_SIGN_SENDIMG:
                         Intent intent1 = new Intent(ChoosePhotoActivity.this, TalkActivity.class);
+                        intent1.putExtra("choose_sign", App.CHOOSE_IMG_INTENT);
                         intent1.putExtra("path", photos.get(position));
                         startActivity(intent1);
                         break;

@@ -85,5 +85,25 @@
                 android:textColor="@color/black"
                 android:text="注销"/>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:id="@+id/btn_folder"
+            android:layout_marginTop="16dp"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:layout_height="50dp">
+            <ImageView
+                android:layout_width="50dp"
+                android:padding="11dp"
+                android:layout_height="50dp"
+                android:src="@drawable/send_fail"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="17sp"
+                android:textColor="@color/black"
+                android:text="指定文件夹"/>
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

@@ -43,6 +43,7 @@
 
         <activity android:name=".view.common.ImgShowActivity"
             android:theme="@style/FullScreen"/>
+        <activity android:name=".view.common.FileChooseActivity"/>
 
         <activity android:name=".view.msg.TalkActivity"
             android:launchMode="singleTask"

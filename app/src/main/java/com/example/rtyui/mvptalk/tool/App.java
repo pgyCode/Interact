@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Environment;
 import android.os.StrictMode;
 
 import com.avos.avoscloud.AVOSCloud;
@@ -60,6 +61,10 @@ public class App extends Application {
     public static final int MSG_SEND_ING = 100000;
     public static final int MSG_SEND_BAD = 100001;
 
+
+    public static final int CHOOSE_IMG_INTENT = 100001;
+    public static final int CHOOSE_FILE_INTENT = 100002;
+
     public static int BROADCAST_STATU = NO_BROADCAST;
 
     public static int CURRENT_TALK = -1;
@@ -71,6 +76,10 @@ public class App extends Application {
 
     //聊天界面时间显示间隔
     public static final long TALK_TIME_SPACE = 1000 * 60 * 1;
+
+    public static final String LOCAL_IMG_PATH = Environment.getExternalStorageDirectory().getPath() + "/interact/imgDownload/";
+    public static final String LOCAL_FILE_PATH = Environment.getExternalStorageDirectory().getPath() + "/interact/fileDownload/";
+
 
     @Override
     public void onCreate() {

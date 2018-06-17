@@ -149,4 +149,52 @@ public class MsgModel extends Model {
             }
         }
     }
+
+
+    //得到真实位置对应的图片位置
+    public int getImgPosition(int truePosition, int id){
+        int count = -1;
+        for (int i = 0; i < comBeans.size(); i++){
+            if (id == comBeans.get(i).userId){
+                for (int j = 0; j <= truePosition; j++){
+                    if (comBeans.get(i).chats.get(j).msg.startsWith(App.MSG_IMG))
+                        count++;
+                }
+                return count;
+            }
+        }
+        return -1;
+    }
+
+    //得到图片位置对应的真实位置
+    public int getMsgPosition(int id, int imgPosition){
+        int count = -1;
+        for (int i = 0; i < comBeans.size(); i++){
+            if (id == comBeans.get(i).userId){
+                for (int j = 0; j <= comBeans.get(i).chats.size(); j++){
+                    if (comBeans.get(i).chats.get(j).msg.startsWith(App.MSG_IMG)){
+                        count++;
+                        if (count == imgPosition)
+                            return j;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    //得到图片数量
+    public int getImgCount(int id){
+        int count = 0;
+        for (int i = 0; i < comBeans.size(); i++){
+            if (id == comBeans.get(i).userId){
+                for (int j = 0; j < comBeans.get(i).chats.size(); j++){
+                    if (comBeans.get(i).chats.get(j).msg.startsWith(App.MSG_IMG))
+                        count++;
+                }
+                return count;
+            }
+        }
+        return -1;
+    }
 }

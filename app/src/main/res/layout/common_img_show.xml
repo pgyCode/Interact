@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <ImageView
+
+    <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
         android:background="@color/black"
-        android:id="@+id/img"
-        android:scaleType="fitCenter"
-        android:layout_height="match_parent" />
-</LinearLayout>
+        android:id="@+id/viewpager"
+        android:layout_height="match_parent">
+
+    </android.support.v4.view.ViewPager>
+
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:text="保存图片"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/btn_save"
+        android:background="@drawable/white_border_black_bg"
+        android:textColor="@color/white"/>
+</RelativeLayout>
