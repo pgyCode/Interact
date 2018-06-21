@@ -10,26 +10,28 @@ import android.widget.TextView;
 
 import com.example.rtyui.mvptalk.R;
 import com.example.rtyui.mvptalk.model.FriendModel;
+import com.example.rtyui.mvptalk.model.TeamModel;
+import com.example.rtyui.mvptalk.newBean.TeamBean;
 import com.example.rtyui.mvptalk.tool.MyImgShow;
 
 /**
  * Created by rtyui on 2018/5/19.
  */
 
-public class LinkFriendAdapter extends BaseAdapter {
+public class TeamAdapter extends BaseAdapter {
 
 
 
     private Context context;
 
-    public LinkFriendAdapter(Context context){
+    public TeamAdapter(Context context){
         this.context = context;
     }
     @Override
     public int getCount() {
-        if (FriendModel.getInstance().linkFriends == null)
+        if (TeamModel.getInstance().teamBeans == null)
             return 0;
-        return FriendModel.getInstance().linkFriends.size();
+        return TeamModel.getInstance().teamBeans.size();
     }
 
     @Override
@@ -44,23 +46,23 @@ public class LinkFriendAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        FriendHolder viewHolder = null;
+        TeamHolder viewHolder = null;
         if (convertView == null){
             convertView = LayoutInflater.from(context).inflate(R.layout.friend_item, null,false);
-            viewHolder = new FriendHolder();
+            viewHolder = new TeamHolder();
             viewHolder.userName = convertView.findViewById(R.id.txt_username);
             viewHolder.headImg = convertView.findViewById(R.id.img_head);
             convertView.setTag(viewHolder);
         }else{
-            viewHolder = (FriendHolder) convertView.getTag();
+            viewHolder = (TeamHolder) convertView.getTag();
         }
-        viewHolder.userName.setText(FriendModel.getInstance().linkFriends.get(position).remark + "(" + FriendModel.getInstance().linkFriends.get(position).nickname + ")");
-        MyImgShow.showNetImgCircle(context, FriendModel.getInstance().linkFriends.get(position).headImgUrl, viewHolder.headImg);
+        viewHolder.userName.setText(TeamModel.getInstance().teamBeans.get(position).nickname);
+        MyImgShow.showNetImgCircle(context, TeamModel.getInstance().teamBeans.get(position).headImgUrl, viewHolder.headImg);
         return convertView;
     }
 
 
-    private class FriendHolder{
+    private class TeamHolder{
         ImageView headImg;
         TextView userName;
     }

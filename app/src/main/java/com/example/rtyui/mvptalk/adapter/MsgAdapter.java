@@ -72,7 +72,7 @@ public class MsgAdapter extends BaseAdapter {
         }
         viewHolder.txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(MsgModel.getInstance().comBeans.get(position).time));
         System.out.println(MsgModel.getInstance().comBeans.get(position).userId);
-        viewHolder.txtNick.setText(FriendModel.getInstance().getUserById(MsgModel.getInstance().comBeans.get(position).userId).nickname);
+        viewHolder.txtNick.setText(FriendModel.getInstance().getUserById(MsgModel.getInstance().comBeans.get(position).userId).remark);
         String temp = MsgModel.getInstance().comBeans.get(position).chats.get(MsgModel.getInstance().comBeans.get(position).chats.size() - 1).getMsg();
         if (temp.startsWith(App.MSG_CHAT))
             viewHolder.txtLastMsg.setText(temp.replace(App.MSG_CHAT, ""));

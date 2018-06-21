@@ -32,6 +32,11 @@
         <activity android:name=".view.friend.AddFriendPageActivity"/>
         <activity android:name=".view.friend.NewFriendActivity"/>
 
+        <activity android:name=".view.team.TeamAddActivity"/>
+        <activity android:name=".view.team.TeamCreateActivity"/>
+        <activity android:name=".view.msg.TeamTalkActivity"/>
+        <activity android:name=".view.teamer.TeamIndexActivity"/>
+
         <activity android:name=".view.user.UserIndexDelFriendActivity"/>
         <activity android:name=".view.user.UserIndexChangeRemarkActivity"/>
         <activity android:name=".view.user.UserIndexActivity"/>

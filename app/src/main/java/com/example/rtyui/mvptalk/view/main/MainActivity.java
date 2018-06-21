@@ -25,6 +25,9 @@ import com.example.rtyui.mvptalk.model.AccountModel;
 import com.example.rtyui.mvptalk.model.FriendModel;
 import com.example.rtyui.mvptalk.model.MsgModel;
 import com.example.rtyui.mvptalk.model.RequestModel;
+import com.example.rtyui.mvptalk.model.TeamModel;
+import com.example.rtyui.mvptalk.model.TeamMsgModel;
+import com.example.rtyui.mvptalk.newBean.TeamChatBean;
 import com.example.rtyui.mvptalk.parent.OnModelChangeListener;
 import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.MyImgShow;
@@ -36,6 +39,7 @@ import com.example.rtyui.mvptalk.view.friend.FriendFragment;
 import com.example.rtyui.mvptalk.view.friend.NewFriendActivity;
 import com.example.rtyui.mvptalk.view.msg.MsgFragment;
 import com.example.rtyui.mvptalk.view.own.LeafFragment;
+import com.example.rtyui.mvptalk.view.team.TeamFragment;
 
 import java.lang.ref.WeakReference;
 
@@ -50,6 +54,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private Fragment msgFrag = null;
     private Fragment friendFrag = null;
     private Fragment leafFrag = null;
+    private Fragment teamFrag = null;
 
     private TextView txtTitle = null;
     private TextView txt_unread;
@@ -63,6 +68,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         MySqliteHelper.getInstance().mkTable(ChatBean.class);
+        MySqliteHelper.getInstance().mkTable(TeamChatBean.class);
 
         continueRecvBroadcastReceiver = new ContinueRecvBroadcastReceiver();
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
@@ -71,6 +77,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         intentFilter.addAction(App.GET_ADD_FRIEND_REQUEST);
         intentFilter.addAction(App.STATU_CHAT_ACTION);
         intentFilter.addAction(App.LINK_FRIEND_RESPONSE_RECV_OK);
+        intentFilter.addAction(App.RECV_TEAM_CHAT_ACTION);
         localBroadcastManager.registerReceiver(continueRecvBroadcastReceiver, intentFilter);
 
         super.onCreate(savedInstanceState);
@@ -82,23 +89,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "talk:socket");
         wl.acquire();
 
-        new NetTaskCode(new NetTaskCodeListener() {
-            @Override
-            public void before() { }
-
-            @Override
-            public int middle() {
-                FriendModel.getInstance().init();
-                MsgModel.getInstance().init();
-                return 0;
-            }
-
-            @Override
-            public void after(int code) {
-                MsgModel.getInstance().actListeners();
-                FriendModel.getInstance().actListeners();
-            }
-        }).execute();
+        FriendModel.getInstance().init();
+        MsgModel.getInstance().init();
+        TeamModel.getInstance().OUTER_init();
+        TeamMsgModel.getInstance().init();
+        TeamMsgModel.getInstance().actListeners();
+        TeamModel.getInstance().actListeners();
+        MsgModel.getInstance().actListeners();
+        FriendModel.getInstance().actListeners();
 
 
         new NetTaskCode(new NetTaskCodeListener() {
@@ -108,6 +106,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             @Override
             public int middle() {
                 FriendModel.getInstance().flush();
+                TeamModel.getInstance().NET_flushTeam();
                 MsgModel.getInstance().doFlush();
                 RequestModel.getInstance().loadRequest();
                 return 0;
@@ -118,6 +117,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 MsgModel.getInstance().actListeners();
                 FriendModel.getInstance().actListeners();
                 RequestModel.getInstance().actListeners();
+                TeamModel.getInstance().actListeners();
             }
         }).execute();
     }
@@ -129,6 +129,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         msgFrag = new MsgFragment();
         friendFrag = new FriendFragment();
+        teamFrag = new TeamFragment();
         leafFrag = new LeafFragment();
 
         txt_unread = findViewById(R.id.txt_unread);
@@ -154,10 +155,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         fragmentTransaction
                 .add(R.id.all, msgFrag)
                 .add(R.id.all, friendFrag)
+                .add(R.id.all, teamFrag)
                 .add(R.id.all, leafFrag)
                 .commit();
         findViewById(R.id.btn_msg).setOnClickListener(this);
         findViewById(R.id.btn_friend).setOnClickListener(this);
+        findViewById(R.id.btn_team).setOnClickListener(this);
         findViewById(R.id.btn_own).setOnClickListener(this);
 
         findViewById(R.id.btn_new_friend).setOnClickListener(this);
@@ -170,11 +173,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
-        int temp = MsgModel.getInstance().getUnread();
-        if (temp == 0)
-            txt_unread.setVisibility(View.GONE);
-        else
-            txt_unread.setText(temp + "");
     }
 
     @Override
@@ -186,8 +184,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             case R.id.btn_friend:
                 replaceFragment(1);
                 break;
-            case R.id.btn_own:
+            case R.id.btn_team:
                 replaceFragment(2);
+                break;
+            case R.id.btn_own:
+                replaceFragment(3);
                 break;
             case R.id.btn_exit:
                 Intent intent1 = new Intent(this, MyService.class);
@@ -226,6 +227,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 fragmentTransaction
                         .show(msgFrag)
                         .hide(friendFrag)
+                        .hide(teamFrag)
                         .hide(leafFrag)
                         .commit();
                 txtTitle.setText("消息");
@@ -236,11 +238,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 ((ImageView)findViewById(R.id.img_leaf)).setImageResource(R.drawable.main_leaf_out);
                 ((TextView)findViewById(R.id.txt_leaf)).setTextColor(ContextCompat.getColor(this, R.color.color_blue));
                 findViewById(R.id.btn_new_friend).setVisibility(View.GONE);
+                findViewById(R.id.btn_team_request).setVisibility(View.GONE);
                 break;
             case 1:
                 fragmentTransaction
                         .hide(msgFrag)
                         .show(friendFrag)
+                        .hide(teamFrag)
                         .hide(leafFrag)
                         .commit();
                 txtTitle.setText("联系人");
@@ -251,11 +255,30 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 ((ImageView)findViewById(R.id.img_leaf)).setImageResource(R.drawable.main_leaf_out);
                 ((TextView)findViewById(R.id.txt_leaf)).setTextColor(ContextCompat.getColor(this, R.color.color_blue));
                 findViewById(R.id.btn_new_friend).setVisibility(View.VISIBLE);
+                findViewById(R.id.btn_team_request).setVisibility(View.GONE);
                 break;
             case 2:
                 fragmentTransaction
                         .hide(msgFrag)
                         .hide(friendFrag)
+                        .show(teamFrag)
+                        .hide(leafFrag)
+                        .commit();
+                txtTitle.setText("团队");
+                ((ImageView)findViewById(R.id.img_chat)).setImageResource(R.drawable.main_msg_out);
+                ((TextView)findViewById(R.id.txt_chat)).setTextColor(ContextCompat.getColor(this, R.color.color_blue));
+                ((ImageView)findViewById(R.id.img_friend)).setImageResource(R.drawable.main_friend_out);
+                ((TextView)findViewById(R.id.txt_link)).setTextColor(ContextCompat.getColor(this, R.color.color_blue));
+                ((ImageView)findViewById(R.id.img_leaf)).setImageResource(R.drawable.main_leaf_out);
+                ((TextView)findViewById(R.id.txt_leaf)).setTextColor(ContextCompat.getColor(this, R.color.color_blue));
+                findViewById(R.id.btn_new_friend).setVisibility(View.GONE);
+                findViewById(R.id.btn_team_request).setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                fragmentTransaction
+                        .hide(msgFrag)
+                        .hide(friendFrag)
+                        .hide(teamFrag)
                         .show(leafFrag)
                         .commit();
                 txtTitle.setText("生活");
@@ -266,6 +289,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 ((ImageView)findViewById(R.id.img_leaf)).setImageResource(R.drawable.main_leaf_in);
                 ((TextView)findViewById(R.id.txt_leaf)).setTextColor(ContextCompat.getColor(this, R.color.color_cheng));
                 findViewById(R.id.btn_new_friend).setVisibility(View.GONE);
+                findViewById(R.id.btn_team_request).setVisibility(View.GONE);
                 break;
         }
     }
@@ -293,6 +317,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     break;
                 case App.LINK_FRIEND_RESPONSE_RECV_OK:
                     FriendModel.getInstance().actListeners();
+                    break;
+                case App.RECV_TEAM_CHAT_ACTION:
+                    TeamMsgModel.getInstance().actListeners();
                     break;
             }
         }

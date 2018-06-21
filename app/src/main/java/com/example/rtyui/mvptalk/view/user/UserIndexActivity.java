@@ -41,7 +41,7 @@ public class UserIndexActivity extends Activity {
             }
         });
 
-        ((TextView)findViewById(R.id.txt_remark)).setText(FriendModel.getInstance().getUserById(id).nickname);
+        ((TextView)findViewById(R.id.txt_remark)).setText(FriendModel.getInstance().getUserById(id).remark);
 
         findViewById(R.id.btn_remark).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,11 +62,10 @@ public class UserIndexActivity extends Activity {
         });
 
 
-        ((TextView)findViewById(R.id.txt_remark)).setText(FriendModel.getInstance().getUserById(id).nickname);
         modelListener = new OnModelChangeListener() {
             @Override
             public void onChange() {
-                ((TextView)findViewById(R.id.txt_remark)).setText(FriendModel.getInstance().getUserById(id).nickname);
+                ((TextView)findViewById(R.id.txt_remark)).setText(FriendModel.getInstance().getUserById(id).remark);
             }
         };
 

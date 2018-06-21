@@ -28,8 +28,11 @@ public class App extends Application {
     public static String HOST_IP = "39.105.39.185";
     public static String host = "http://" + HOST_IP + ":80/";
     public static final String RECV_CHAT_ACTION = "RECV_CHAT_ACTION";
+    public static final String RECV_TEAM_CHAT_ACTION = "RECV_TEAM_CHAT_ACTION";
     public static final String STATU_CHAT_ACTION = "STATU_CHAT_ACTION";
 
+
+    public static final String SEND_TEAM_CHAT_ACTION = "SEND_TEAM_CHAT_ACTION";//群组聊天消息
     public static final String SEND_CHAT_ACTION = "SEND_CHAT_ACTION";//聊天消息
     public static final String SEND_ADD_FRIEND_ACTION = "SEND_ADD_FRIEND_ACTION";//好友处理消息
     public static final String RECV_ADD_FRIEND_ACTION = "RECV_ADD_FRIEND_ACTION";//好友处理消息

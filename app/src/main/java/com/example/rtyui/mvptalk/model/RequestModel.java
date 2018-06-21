@@ -6,6 +6,7 @@ import com.example.rtyui.mvptalk.Msg.Msg;
 import com.example.rtyui.mvptalk.Msg.MsgRequest;
 import com.example.rtyui.mvptalk.bean.AddFriendBean;
 import com.example.rtyui.mvptalk.bean.UserBean;
+import com.example.rtyui.mvptalk.newBean.FriendBean;
 import com.example.rtyui.mvptalk.parent.Model;
 import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.MyLocalObject;
@@ -86,7 +87,7 @@ public class RequestModel extends Model {
                     "&recvId=" +
                     addFriendBeans.get(position).recvId);
             Msg msg = new Gson().fromJson(temp, Msg.class);
-            FriendModel.getInstance().linkFriends.add(new UserBean(addFriendBeans.get(position).sendId, addFriendBeans.get(position).sendNickname, addFriendBeans.get(position).sendHeadImgUrl));
+            FriendModel.getInstance().linkFriends.add(new FriendBean(addFriendBeans.get(position).sendId, addFriendBeans.get(position).sendNickname, addFriendBeans.get(position).sendHeadImgUrl, addFriendBeans.get(position).sendNickname));
             //addFriendBeans.remove(position);
             MyLocalObject.saveObject("linkFriends", FriendModel.getInstance().linkFriends);
             return msg.code;

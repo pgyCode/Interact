@@ -23,6 +23,9 @@ import com.example.rtyui.mvptalk.model.AccountModel;
 import com.example.rtyui.mvptalk.model.FriendModel;
 import com.example.rtyui.mvptalk.model.MsgModel;
 import com.example.rtyui.mvptalk.model.RequestModel;
+import com.example.rtyui.mvptalk.model.TeamMsgModel;
+import com.example.rtyui.mvptalk.newBean.FriendBean;
+import com.example.rtyui.mvptalk.newBean.TeamChatBean;
 import com.example.rtyui.mvptalk.tool.AbstractNetTaskCode;
 import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.MySqliteHelper;
@@ -77,6 +80,9 @@ public class MyService extends Service {
                             break;
                         case App.RECV_ADD_FRIEND_ACTION:
                             dealRecvAddFriendAction(strings[1]);
+                            break;
+                        case App.SEND_TEAM_CHAT_ACTION:
+                            dealSendTeamChatAction(strings[1]);
                             break;
                     }
                 }
@@ -215,6 +221,35 @@ public class MyService extends Service {
                         }
                     }).executeOnExecutor(sendMessager);
                     break;
+                case App.SEND_TEAM_CHAT_ACTION:
+                    new NetTaskCode(new NetTaskCodeListener() {
+                        @Override
+                        public void before() {
+
+                        }
+
+                        @Override
+                        public int middle() {
+                            try {
+                                dataOutputStream.writeUTF(App.SEND_TEAM_CHAT_ACTION + "|" + temp);
+                                dataOutputStream.flush();
+                                TeamMsgModel.getInstance().changeStatu(
+                                        new Gson().fromJson(temp, TeamChatBean.class).time, App.MSG_SEND_GOOD);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                closeSocket();
+                                TeamMsgModel.getInstance().changeStatu(
+                                        new Gson().fromJson(temp, TeamChatBean.class).time, App.MSG_SEND_BAD);
+                            }
+                            return 0;
+                        }
+
+                        @Override
+                        public void after(int code) {
+                            TeamMsgModel.getInstance().actListeners();
+                        }
+                    }).executeOnExecutor(sendMessager);
+                    break;
                 case App.SEND_ADD_FRIEND_ACTION:
                     sendMessager.execute(new Sender(
                             App.SEND_ADD_FRIEND_ACTION + "|" + intent.getStringExtra("data")));
@@ -249,6 +284,7 @@ public class MyService extends Service {
         intentFilter.addAction(App.SEND_ADD_FRIEND_ACTION);
         intentFilter.addAction(App.RECV_ADD_FRIEND_ACTION);
         intentFilter.addAction(App.DESTORY_PIPE);
+        intentFilter.addAction(App.SEND_TEAM_CHAT_ACTION);
         localBroadcastManager.registerReceiver(myBroadcastReceiver, intentFilter);
     }
 
@@ -280,10 +316,19 @@ public class MyService extends Service {
 
     private void dealRecvAddFriendAction(String str){
         AddFriendBean bean = new Gson().fromJson(str, AddFriendBean.class);
-        FriendModel.getInstance().linkFriends.add(new UserBean(bean.sendId, bean.sendNickname, bean.sendHeadImgUrl));
+        FriendModel.getInstance().linkFriends.add(new FriendBean(bean.sendId, bean.sendNickname, bean.sendHeadImgUrl, bean.sendNickname));
         Intent intent = new Intent(App.LINK_FRIEND_RESPONSE_RECV_OK);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(MyService.this);
         localBroadcastManager.sendBroadcast(intent);
         new NotificationLinkFriendRecvUtils(MyService.this).sendNotification(bean);
+    }
+
+    private void dealSendTeamChatAction(String str){
+        TeamChatBean bean = new Gson().fromJson(str, TeamChatBean.class);
+        TeamMsgModel.getInstance().addUnread(bean);
+
+        Intent intent = new Intent(App.RECV_TEAM_CHAT_ACTION);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(MyService.this);
+        localBroadcastManager.sendBroadcast(intent);
     }
 }

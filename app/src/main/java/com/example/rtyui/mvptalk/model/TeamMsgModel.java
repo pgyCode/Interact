@@ -3,15 +3,14 @@ package com.example.rtyui.mvptalk.model;
 import com.example.rtyui.mvptalk.Msg.MsgCom;
 import com.example.rtyui.mvptalk.bean.ChatBean;
 import com.example.rtyui.mvptalk.bean.ComBean;
+import com.example.rtyui.mvptalk.newBean.TeamChatBean;
+import com.example.rtyui.mvptalk.newBean.TeamComBean;
 import com.example.rtyui.mvptalk.parent.Model;
 import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.MySqliteHelper;
 import com.example.rtyui.mvptalk.tool.NetVisitor;
 import com.google.gson.Gson;
 
-import java.nio.file.attribute.PosixFileAttributes;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,40 +18,40 @@ import java.util.List;
  * Created by rtyui on 2018/5/2.
  */
 
-public class MsgModel extends Model {
+public class TeamMsgModel extends Model {
 
-    private static MsgModel instance;
+    private static TeamMsgModel instance;
 
-    public static MsgModel getInstance() {
+    public static TeamMsgModel getInstance() {
         if (instance == null)
-            instance = new MsgModel();
+            instance = new TeamMsgModel();
         return instance;
     }
     public static synchronized void dstroyInstance() {
         if (instance != null) instance = null;
     }
 
-    private MsgModel(){
+    private TeamMsgModel(){
     }
 
 
     public void init(){
         comBeans = new LinkedList<>();
         if (AccountModel.getInstance().currentUser != null){
-            List<ChatBean> chatBeans = MySqliteHelper.getInstance().getAll(ChatBean.class);
-            for (ChatBean chatBean : chatBeans){
+            List<TeamChatBean> chatBeans = MySqliteHelper.getInstance().getAll(TeamChatBean.class);
+            for (TeamChatBean chatBean : chatBeans){
                 flush(chatBean);
             }
         }
     }
 
-    public List<ComBean> comBeans;
+    public List<TeamComBean> comBeans;
 
     /**
      * 辅助函数 添加未读取的消息
      * @param chatBean
      */
-    public void addUnread(ChatBean chatBean){
+    public void addUnread(TeamChatBean chatBean){
         add(chatBean).unread++;
     }
 
@@ -61,7 +60,7 @@ public class MsgModel extends Model {
      * @param chatBean
      * @return
      */
-    public ComBean add(ChatBean chatBean){
+    public TeamComBean add(TeamChatBean chatBean){
         MySqliteHelper.getInstance().insert(chatBean);
         return flush(chatBean);
     }
@@ -71,26 +70,22 @@ public class MsgModel extends Model {
      * @param chatBean
      * @return
      */
-    public ComBean flush(ChatBean chatBean){
-        int id = chatBean.sendId == AccountModel.getInstance().currentUser.id ? chatBean.recvId : chatBean.sendId;
-        ComBean comBean = null;
+    public TeamComBean flush(TeamChatBean chatBean){
+        if (comBeans == null)
+            comBeans = new LinkedList<>();
+        int id = chatBean.recvId;
+        TeamComBean comBean = null;
         for (int i = 0; i < comBeans.size(); i++){
-            if (comBeans.get(i).userId == id){
+            if (comBeans.get(i).id == id){
                 comBean = comBeans.get(i);
             }
         }
         if (comBean == null){
-            List<ChatBean> chatBeans = new LinkedList<>();
-            comBean = new ComBean(
-                    chatBean.sendId == AccountModel.getInstance().currentUser.id ? chatBean.recvId : chatBean.sendId,
-                    chatBean.sendNickname.equals(AccountModel.getInstance().currentUser.nickname) ? chatBean.recvNickname : chatBean.sendNickname,
-                    chatBean.sendHeadImgUrl.equals(AccountModel.getInstance().currentUser.headImgUrl) ? chatBean.recvHeadImgUrl : chatBean.sendHeadImgUrl, chatBeans);
+            List<TeamChatBean> chatBeans = new LinkedList<>();
+            comBean = new TeamComBean(id, chatBeans);
             comBeans.add(comBean);
         }
         comBean.chats.add(chatBean);
-        comBean.time = chatBean.time;
-        comBeans.remove(comBean);
-        comBeans.add(0, comBean);
         return comBean;
     }
 
@@ -100,13 +95,13 @@ public class MsgModel extends Model {
      */
     public int doFlush() {
         try{
-            String temp = NetVisitor.postNormal(App.host + "Talk/msg/getUnrecvMsg", "id=" +
-                    AccountModel.getInstance().currentUser.id);
-            temp = temp.replace("NickName", "Nickname").replace("sendDate", "time");
-            List<ChatBean> chatBeans1 = new Gson().fromJson(temp, MsgCom.class).data;
-            for (ChatBean chatBean : chatBeans1){
-                addUnread(chatBean);
-            }
+//            String temp = NetVisitor.postNormal(App.host + "Talk/msg/getUnrecvMsg", "id=" +
+//                    AccountModel.getInstance().currentUser.id);
+//            temp = temp.replace("NickName", "Nickname").replace("sendDate", "time");
+//            List<TeamChatBean> chatBeans1 = new Gson().fromJson(temp, MsgCom.class).data;
+//            for (TeamChatBean chatBean : chatBeans1){
+//                addUnread(chatBean);
+//            }
             return App.NET_SUCCEED;
         }catch(Exception e){
             return App.NET_FAil;
@@ -118,9 +113,9 @@ public class MsgModel extends Model {
      * @param id
      * @return
      */
-    public ComBean getCombeanById(int id){
+    public TeamComBean getCombeanById(int id){
         for (int i = 0; i < comBeans.size(); i++){
-            if (comBeans.get(i).userId == id)
+            if (comBeans.get(i).id == id)
                 return comBeans.get(i);
         }
         return null;
@@ -141,7 +136,7 @@ public class MsgModel extends Model {
 
     //更改消息状态
     public void changeStatu(long time,int statu){
-        MySqliteHelper.getInstance().update(ChatBean.class, " statu =" + statu, " time =" + time );
+        MySqliteHelper.getInstance().update(TeamChatBean.class, " statu =" + statu, " time =" + time );
         for (int i = 0; i < comBeans.size(); i++){
             for (int j = 0; j < comBeans.get(i).chats.size(); j++){
                 if (comBeans.get(i).chats.get(j).time == time)
@@ -155,7 +150,7 @@ public class MsgModel extends Model {
     public int getImgPosition(int truePosition, int id){
         int count = -1;
         for (int i = 0; i < comBeans.size(); i++){
-            if (id == comBeans.get(i).userId){
+            if (id == comBeans.get(i).id){
                 for (int j = 0; j <= truePosition; j++){
                     if (comBeans.get(i).chats.get(j).msg.startsWith(App.MSG_IMG))
                         count++;
@@ -170,7 +165,7 @@ public class MsgModel extends Model {
     public int getMsgPosition(int id, int imgPosition){
         int count = -1;
         for (int i = 0; i < comBeans.size(); i++){
-            if (id == comBeans.get(i).userId){
+            if (id == comBeans.get(i).id){
                 for (int j = 0; j <= comBeans.get(i).chats.size(); j++){
                     if (comBeans.get(i).chats.get(j).msg.startsWith(App.MSG_IMG)){
                         count++;
@@ -187,7 +182,7 @@ public class MsgModel extends Model {
     public int getImgCount(int id){
         int count = 0;
         for (int i = 0; i < comBeans.size(); i++){
-            if (id == comBeans.get(i).userId){
+            if (id == comBeans.get(i).id){
                 for (int j = 0; j < comBeans.get(i).chats.size(); j++){
                     if (comBeans.get(i).chats.get(j).msg.startsWith(App.MSG_IMG))
                         count++;

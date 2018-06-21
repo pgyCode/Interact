@@ -68,6 +68,7 @@ public class LeafFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 LeafFragment.this.getActivity().finish();
+                System.exit(0);
             }
         });
 
@@ -76,11 +77,7 @@ public class LeafFragment extends Fragment {
             public void onClick(View v) {
                 LeafFragment.this.getActivity().finish();
                 AccountModel.getInstance().clearAccountLocal();
-                AccountModel.dstroyInstance();
-                FriendModel.dstroyInstance();
-                MsgModel.dstroyInstance();
-                RequestModel.dstroyInstance();
-                MySqliteHelper.dstroyInstance();
+                System.exit(0);
             }
         });
 

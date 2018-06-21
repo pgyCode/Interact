@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/header"
+        android:fitsSystemWindows="true"
+        android:background="@drawable/gardient_header"
+        android:layout_height="73dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="加入团队"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            android:id="@+id/txt_toname"/>
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:id="@+id/btn_back"
+            android:layout_alignParentBottom="true"
+            android:background="@color/touming"
+            android:src="@drawable/backer"
+            android:padding="18dp"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="确定"
+            android:background="@color/touming"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/white"
+            android:id="@+id/btn_sure"/>
+    </RelativeLayout>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/header"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:textSize="17sp"
+        android:inputType="number"
+        android:textColor="@color/black"
+        android:lines="1"
+        android:hint="请输入你要创建团队的名称"
+        android:background="@drawable/bottom_cheng_bg"
+        android:id="@+id/edt_input"/>
+    <ViewStub
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/loading"
+        android:layout="@layout/loading"/>
+</RelativeLayout>
+

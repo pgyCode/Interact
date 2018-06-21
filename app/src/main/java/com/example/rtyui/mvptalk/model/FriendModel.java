@@ -12,7 +12,8 @@ import com.example.rtyui.mvptalk.bean.AddFriendBean;
 import com.example.rtyui.mvptalk.bean.ChatBean;
 import com.example.rtyui.mvptalk.bean.Group;
 import com.example.rtyui.mvptalk.bean.GroupBean;
-import com.example.rtyui.mvptalk.bean.UserBean;
+import com.example.rtyui.mvptalk.newBean.FriendBean;
+import com.example.rtyui.mvptalk.newMsg.FriendFlushMsg;
 import com.example.rtyui.mvptalk.parent.Model;
 import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.MyLocalObject;
@@ -46,11 +47,11 @@ public class FriendModel extends Model {
 
     public void init(){
         if (AccountModel.getInstance().currentUser != null) {
-            linkFriends = (List<UserBean>) MyLocalObject.getObject("linkFriends_" + AccountModel.getInstance().currentUser.id);
+            linkFriends = (List<FriendBean>) MyLocalObject.getObject("linkFriends_" + AccountModel.getInstance().currentUser.id);
         }
     }
 
-    public List<UserBean> linkFriends = null;
+    public List<FriendBean> linkFriends = null;
 
 
     /**
@@ -58,10 +59,10 @@ public class FriendModel extends Model {
      * @param id
      * @return 对应id的用户
      */
-    public UserBean getUserById(int id) {
-        for (UserBean userBean : linkFriends) {
-            if (userBean.id == id)
-                return userBean;
+    public FriendBean getUserById(int id) {
+        for (FriendBean friendBean : linkFriends) {
+            if (friendBean.id == id)
+                return friendBean;
         }
         return null;
     }
@@ -74,7 +75,7 @@ public class FriendModel extends Model {
         try{
             String temp = NetVisitor.postNormal(App.host + "Talk/friend/getAllFri?", "userId=" +
                     AccountModel.getInstance().currentUser.id);
-            MsgLinkFriend msg = new Gson().fromJson(temp, MsgLinkFriend.class);
+            FriendFlushMsg msg = new Gson().fromJson(temp, FriendFlushMsg.class);
             if (msg.code == App.NET_SUCCEED){
                 linkFriends = msg.data;
                 MyLocalObject.saveObject("linkFriends_" + AccountModel.getInstance().currentUser.id, linkFriends);
@@ -103,7 +104,7 @@ public class FriendModel extends Model {
             Msg msg = new Gson().fromJson(temp, Msg.class);
             if (msg.code == App.NET_SUCCEED)
             {
-                FriendModel.getInstance().getUserById(id).nickname = remark;
+                FriendModel.getInstance().getUserById(id).remark = remark;
                 MyLocalObject.saveObject("linkFriends_" + AccountModel.getInstance().currentUser.id, linkFriends);
             }
             return msg.code;
