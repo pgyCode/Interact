@@ -1,6 +1,7 @@
 package com.example.rtyui.mvptalk.model;
 
 import com.example.rtyui.mvptalk.newBean.TeamBean;
+import com.example.rtyui.mvptalk.newBean.TeamMemberBean;
 import com.example.rtyui.mvptalk.newMsg.Msg;
 import com.example.rtyui.mvptalk.newMsg.TeamCreateMsg;
 import com.example.rtyui.mvptalk.newMsg.TeamFlushMsg;
@@ -56,6 +57,12 @@ public class TeamModel extends Model {
             //---
             if (msg.code == App.NET_SUCCEED){
                 teamBeans = msg.data;
+                teamBeans.get(0).members = new LinkedList<>();
+                teamBeans.get(0).members.add(new TeamMemberBean(0,"样密", "http://lc-X6aWf1qq.cn-n1.lcfile.com/jLBbP7vwWmpfpBHgAI8XsttDfDkrVVYnKpVfNrPZ.png"));
+                teamBeans.get(0).members.add(new TeamMemberBean(4,"mi", "http://lc-X6aWf1qq.cn-n1.lcfile.com/Eh0tLPOXIHpcheoONeArRj65f35TBfpJBrsFAksF.png"));
+                teamBeans.get(0).members.add(new TeamMemberBean(5,"hsm like tty", "http://lc-X6aWf1qq.cn-n1.lcfile.com/wFGMlU0nNSAvZPKOylvsw15kNXLfJP8H6Kk2Llqf.png"));
+                teamBeans.get(0).members.add(new TeamMemberBean(15,"中文", "http://lc-X6aWf1qq.cn-n1.lcfile.com/jLBbP7vwWmpfpBHgAI8XsttDfDkrVVYnKpVfNrPZ.png"));
+                teamBeans.get(0).members.add(new TeamMemberBean(16,"寻寻幂幂", "http://lc-X6aWf1qq.cn-n1.lcfile.com/hMnTLU25rtUcSJf7tZDZij61cKXIqm8ArVZP1X95.png"));
                 MyLocalObject.saveObject("teams_" + AccountModel.getInstance().currentUser.id, teamBeans);
             }
             return msg.code;
@@ -123,6 +130,25 @@ public class TeamModel extends Model {
         }
         return null;
     }
+
+
+
+    /**
+     * 外部功能：通过teamId, userId获取memberbean
+     * @param teamId
+     * @param userId
+     * @return
+     */
+    public TeamMemberBean OUTER_getMemberById(int teamId, int userId){
+        List<TeamMemberBean> members = OUTER_getTeamById(teamId).members;
+        for (TeamMemberBean bean : members){
+            if (bean.id == userId)
+                return bean;
+        }
+        return null;
+    }
+
+
 
 //    /**
 //     * 辅助函数

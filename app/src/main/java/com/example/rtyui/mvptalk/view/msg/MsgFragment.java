@@ -24,6 +24,9 @@ import com.example.rtyui.mvptalk.R;
 import com.example.rtyui.mvptalk.adapter.MsgAdapter;
 import com.example.rtyui.mvptalk.model.FriendModel;
 import com.example.rtyui.mvptalk.model.MsgModel;
+import com.example.rtyui.mvptalk.model.TeamModel;
+import com.example.rtyui.mvptalk.model.TeamMsgModel;
+import com.example.rtyui.mvptalk.newBean.TeamMemberBean;
 import com.example.rtyui.mvptalk.parent.OnModelChangeListener;
 import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.NetTaskCode;
@@ -62,7 +65,8 @@ public class MsgFragment extends Fragment{
         };
         MsgModel.getInstance().listeners.add(modelListener);
         FriendModel.getInstance().listeners.add(modelListener);
-
+        TeamModel.getInstance().listeners.add(modelListener);
+        TeamMsgModel.getInstance().listeners.add(modelListener);
 
         return root;
     }
@@ -98,15 +102,6 @@ public class MsgFragment extends Fragment{
                 MsgModel.getInstance().actListeners();
             }
         });
-
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                setBackgroundAlpha(0.3f);
-                popMsg.showAtLocation(listView.getChildAt(position), Gravity.TOP, 0 ,0);
-                return true;
-            }
-        });
     }
 
     @Override
@@ -115,11 +110,19 @@ public class MsgFragment extends Fragment{
     }
 
     public void goTalk(int position) {
-        Intent intent = new Intent(MsgFragment.this.getContext(), TalkActivity.class);
-        intent.putExtra("userId", MsgModel.getInstance().comBeans.get(position).userId);
-        intent.putExtra("nickname", MsgModel.getInstance().comBeans.get(position).nickname);
-        intent.putExtra("headImgUrl", MsgModel.getInstance().comBeans.get(position).headImgUrl);
-        startActivity(intent);
+        if (position < MsgModel.getInstance().LOCAL_getSize()){
+            Intent intent = new Intent(MsgFragment.this.getContext(), TalkActivity.class);
+            intent.putExtra("userId", MsgModel.getInstance().comBeans.get(position).userId);
+            //intent.putExtra("nickname", MsgModel.getInstance().comBeans.get(position).nickname);
+            //intent.putExtra("headImgUrl", MsgModel.getInstance().comBeans.get(position).headImgUrl);
+            startActivity(intent);
+        }else{
+            Intent intent = new Intent(MsgFragment.this.getContext(), TeamTalkActivity.class);
+            intent.putExtra("id", TeamMsgModel.getInstance().comBeans.get(position - MsgModel.getInstance().LOCAL_getSize()).id);
+            //intent.putExtra("nickname", MsgModel.getInstance().comBeans.get(position).nickname);
+            //intent.putExtra("headImgUrl", MsgModel.getInstance().comBeans.get(position).headImgUrl);
+            startActivity(intent);
+        }
     }
 
 
@@ -135,6 +138,8 @@ public class MsgFragment extends Fragment{
         super.onDestroy();
         MsgModel.getInstance().listeners.remove(modelListener);
         FriendModel.getInstance().listeners.remove(modelListener);
+        TeamModel.getInstance().listeners.remove(modelListener);
+        TeamMsgModel.getInstance().listeners.remove(modelListener);
     }
 
     /**

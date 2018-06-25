@@ -42,14 +42,15 @@ public class OwnerActivity extends Activity {
 
         txtId = findViewById(R.id.txt_id);
         txtNick = findViewById(R.id.txt_nick);
-        txtNick.setOnClickListener(new View.OnClickListener() {
+
+        findViewById(R.id.btn_nick).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(OwnerActivity.this,ChangeNickActivity.class));
             }
         });
         imgHead = findViewById(R.id.img_head);
-        imgHead.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_img).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 

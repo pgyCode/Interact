@@ -36,8 +36,8 @@
             android:layout_alignParentBottom="true"
             android:scaleType="fitCenter"
             android:background="@color/touming"
-            android:src="@drawable/talk_user"
-            android:padding="15dp"/>
+            android:src="@drawable/team_info"
+            android:padding="10dp"/>
     </RelativeLayout>
 
     <RelativeLayout

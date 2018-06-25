@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.rtyui.mvptalk.R;
 import com.example.rtyui.mvptalk.model.MsgModel;
+import com.example.rtyui.mvptalk.model.TeamMsgModel;
 import com.example.rtyui.mvptalk.tool.AbstractNetTaskCode;
 import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.MyImgShow;
@@ -33,8 +34,6 @@ public class ImgShowActivity extends Activity {
 
     private ViewPager viewPager;
 
-    private MyAdapter myAdapter;
-
     private int id;
 
     private List<View> views;
@@ -45,40 +44,69 @@ public class ImgShowActivity extends Activity {
         setContentView(R.layout.common_img_show);
 
         views = new ArrayList<>();
-
         id = getIntent().getIntExtra("id", -1);
-
         viewPager = findViewById(R.id.viewpager);
 
-        viewPager.setAdapter(myAdapter = new MyAdapter());
+        switch (getIntent().getIntExtra("sign", -1)){
+            case App.PHOTO_SHOW_SIGN_SENDIMG:viewPager.setAdapter(new MyAdapter());
 
-        Toast.makeText(this, getIntent().getIntExtra("position", -1) + "", Toast.LENGTH_SHORT).show();
+                viewPager.setCurrentItem(MsgModel.getInstance().getImgPosition(getIntent().getIntExtra("position", -1), id));
 
-        viewPager.setCurrentItem(MsgModel.getInstance().getImgPosition(getIntent().getIntExtra("position", -1), id));
+                for (int i = 0; i < MsgModel.getInstance().getImgCount(id); i++){
+                    View view = LayoutInflater.from(ImgShowActivity.this).inflate(R.layout.common_img_show_item, null, false);
+                    MyImgShow.showCompleteImgSquare(ImgShowActivity.this, MsgModel.getInstance().getCombeanById(id).chats.get(MsgModel.getInstance().getMsgPosition(id, i)).msg.replace(App.MSG_IMG, ""), ((ImageView)view.findViewById(R.id.img)));
+                    views.add(view);
+                }
 
-        for (int i = 0; i < MsgModel.getInstance().getImgCount(id); i++){
-            View view = LayoutInflater.from(ImgShowActivity.this).inflate(R.layout.common_img_show_item, null, false);
-            MyImgShow.showCompleteImgSquare(ImgShowActivity.this, MsgModel.getInstance().getCombeanById(id).chats.get(MsgModel.getInstance().getMsgPosition(id, i)).msg.replace(App.MSG_IMG, ""), ((ImageView)view.findViewById(R.id.img)));
-            views.add(view);
+                findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (ActivityCompat.checkSelfPermission(ImgShowActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                ImgShowActivity.this.requestPermissions(
+                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
+                            }else {
+                                new ImgDownloadAsyncTask().execute();
+                            }
+                        }
+                        else{
+                            new ImgDownloadAsyncTask().execute();
+                        }
+                    }
+                });
+                break;
+            case App.PHOTO_SHOW_SIGN_TEAM_SENDIMG:
+                viewPager.setAdapter(new MyTeamAdapter());
+
+                viewPager.setCurrentItem(TeamMsgModel.getInstance().getImgPosition(getIntent().getIntExtra("position", -1), id));
+
+                for (int i = 0; i < TeamMsgModel.getInstance().getImgCount(id); i++){
+                    View view = LayoutInflater.from(ImgShowActivity.this).inflate(R.layout.common_img_show_item, null, false);
+                    MyImgShow.showCompleteImgSquare(ImgShowActivity.this, TeamMsgModel.getInstance().getCombeanById(id).chats.get(TeamMsgModel.getInstance().getMsgPosition(id, i)).msg.replace(App.MSG_IMG, ""), ((ImageView)view.findViewById(R.id.img)));
+                    views.add(view);
+                }
+
+                findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (ActivityCompat.checkSelfPermission(ImgShowActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                ImgShowActivity.this.requestPermissions(
+                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
+                            }else {
+                                new TeamImgDownloadAsyncTask().execute();
+                            }
+                        }
+                        else{
+                            new TeamImgDownloadAsyncTask().execute();
+                        }
+                    }
+                });
+                break;
         }
 
-        findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (ActivityCompat.checkSelfPermission(ImgShowActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        ImgShowActivity.this.requestPermissions(
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
-                    }else {
-                        Toast.makeText(ImgShowActivity.this, "权限已申请", Toast.LENGTH_SHORT).show();
-                        new ImgDownloadAsyncTask().execute();
-                    }
-                }
-                else{
-                    new ImgDownloadAsyncTask().execute();
-                }
-            }
-        });
+
+
     }
 
 
@@ -87,6 +115,31 @@ public class ImgShowActivity extends Activity {
         @Override
         public int getCount() {
             return MsgModel.getInstance().getImgCount(id);
+        }
+
+        @Override
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+            return view == object;
+        }
+
+        @NonNull
+        @Override
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
+            if (views.get(position).getParent() == null)
+                container.addView(views.get(position));
+            return views.get(position);
+        }
+
+        @Override
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        }
+    }
+
+    public class MyTeamAdapter extends PagerAdapter{
+
+        @Override
+        public int getCount() {
+            return TeamMsgModel.getInstance().getImgCount(id);
         }
 
         @Override
@@ -117,6 +170,28 @@ public class ImgShowActivity extends Activity {
         @Override
         protected int middle() {
             return NetVisitor.downloadImg(MsgModel.getInstance().getCombeanById(id).chats.get(MsgModel.getInstance().getMsgPosition(id, viewPager.getCurrentItem())).msg.replace(App.MSG_IMG, ""), System.currentTimeMillis() + "");
+        }
+
+        @Override
+        protected void after(int integer) {
+            if (integer == App.NET_SUCCEED){
+                Toast.makeText(ImgShowActivity.this, "下载成功", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(ImgShowActivity.this, "下载失败", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public class TeamImgDownloadAsyncTask extends AbstractNetTaskCode{
+
+        @Override
+        protected void before() {
+
+        }
+
+        @Override
+        protected int middle() {
+            return NetVisitor.downloadImg(TeamMsgModel.getInstance().getCombeanById(id).chats.get(TeamMsgModel.getInstance().getMsgPosition(id, viewPager.getCurrentItem())).msg.replace(App.MSG_IMG, ""), System.currentTimeMillis() + "");
         }
 
         @Override

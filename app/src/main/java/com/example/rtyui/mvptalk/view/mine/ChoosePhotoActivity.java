@@ -36,6 +36,7 @@ import com.example.rtyui.mvptalk.tool.NetTaskCodeListener;
 import com.example.rtyui.mvptalk.tool.NetTaskSet;
 import com.example.rtyui.mvptalk.tool.NetTaskSetListener;
 import com.example.rtyui.mvptalk.view.msg.TalkActivity;
+import com.example.rtyui.mvptalk.view.msg.TeamTalkActivity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -90,6 +91,12 @@ public class ChoosePhotoActivity extends Activity {
                         intent1.putExtra("choose_sign", App.CHOOSE_IMG_INTENT);
                         intent1.putExtra("path", photos.get(position));
                         startActivity(intent1);
+                        break;
+                    case App.PHOTO_CHOOSE_SIGN_TEAM_SENDIMG:
+                        Intent intent2 = new Intent(ChoosePhotoActivity.this, TeamTalkActivity.class);
+                        intent2.putExtra("choose_sign", App.CHOOSE_IMG_INTENT);
+                        intent2.putExtra("path", photos.get(position));
+                        startActivity(intent2);
                         break;
                 }
             }

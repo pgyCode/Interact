@@ -1,5 +1,7 @@
 package com.example.rtyui.mvptalk.model;
 
+import android.accounts.Account;
+
 import com.example.rtyui.mvptalk.Msg.MsgCom;
 import com.example.rtyui.mvptalk.bean.ChatBean;
 import com.example.rtyui.mvptalk.bean.ComBean;
@@ -63,6 +65,7 @@ public class MsgModel extends Model {
      */
     public ComBean add(ChatBean chatBean){
         MySqliteHelper.getInstance().insert(chatBean);
+        //helpBackChat();
         return flush(chatBean);
     }
 
@@ -102,9 +105,9 @@ public class MsgModel extends Model {
         try{
             String temp = NetVisitor.postNormal(App.host + "Talk/msg/getUnrecvMsg", "id=" +
                     AccountModel.getInstance().currentUser.id);
-            temp = temp.replace("NickName", "Nickname").replace("sendDate", "time");
             List<ChatBean> chatBeans1 = new Gson().fromJson(temp, MsgCom.class).data;
             for (ChatBean chatBean : chatBeans1){
+                chatBean.time = System.currentTimeMillis();
                 addUnread(chatBean);
             }
             return App.NET_SUCCEED;
@@ -196,5 +199,33 @@ public class MsgModel extends Model {
             }
         }
         return -1;
+    }
+
+
+    /**
+     * 帮助获取记录大小
+     * @return
+     */
+    public int LOCAL_getSize(){
+        if (comBeans == null)
+            return 0;
+        else
+            return comBeans.size();
+    }
+
+    /**
+     * 协助后台消息到来
+     */
+    private void helpBackChat(){
+        if (AccountModel.getInstance().currentUser == null)
+            AccountModel.getInstance().init();
+        if (MsgModel.getInstance().comBeans == null)
+            MsgModel.getInstance().init();
+        if (FriendModel.getInstance().linkFriends == null)
+            FriendModel.getInstance().init();
+        if (TeamMsgModel.getInstance().comBeans == null)
+            TeamMsgModel.getInstance().init();
+        if (TeamModel.getInstance().teamBeans == null)
+            TeamModel.getInstance().OUTER_init();
     }
 }

@@ -34,7 +34,8 @@
 
         <activity android:name=".view.team.TeamAddActivity"/>
         <activity android:name=".view.team.TeamCreateActivity"/>
-        <activity android:name=".view.msg.TeamTalkActivity"/>
+        <activity android:name=".view.msg.TeamTalkActivity"
+            android:launchMode="singleTask"/>
         <activity android:name=".view.teamer.TeamIndexActivity"/>
 
         <activity android:name=".view.user.UserIndexDelFriendActivity"/>

@@ -1,5 +1,6 @@
 package com.example.rtyui.mvptalk.view.main;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -59,7 +60,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private TextView txtTitle = null;
     private TextView txt_unread;
 
-    private ContinueRecvBroadcastReceiver continueRecvBroadcastReceiver;
+//    private ContinueRecvBroadcastReceiver continueRecvBroadcastReceiver;
 
     private OnModelChangeListener modelListener;
 
@@ -67,65 +68,48 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+
+        /**
+         * 创建聊天记录表
+         * 1.创建个人聊天表
+         * 2.创建团队聊天表
+         */
         MySqliteHelper.getInstance().mkTable(ChatBean.class);
         MySqliteHelper.getInstance().mkTable(TeamChatBean.class);
 
-        continueRecvBroadcastReceiver = new ContinueRecvBroadcastReceiver();
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(App.RECV_CHAT_ACTION);
-        intentFilter.addAction(App.GET_ADD_FRIEND_REQUEST);
-        intentFilter.addAction(App.STATU_CHAT_ACTION);
-        intentFilter.addAction(App.LINK_FRIEND_RESPONSE_RECV_OK);
-        intentFilter.addAction(App.RECV_TEAM_CHAT_ACTION);
-        localBroadcastManager.registerReceiver(continueRecvBroadcastReceiver, intentFilter);
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-        initLayout();
+        //启动服务
         Intent intent = new Intent(this, MyService.class);
         startService(intent);
+
+        //初始化页面
+        setContentView(R.layout.main);
+        initLayout();
+
+        //设置电量模式，使得锁屏是可以接受消息
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "talk:socket");
         wl.acquire();
 
-        FriendModel.getInstance().init();
-        MsgModel.getInstance().init();
-        TeamModel.getInstance().OUTER_init();
-        TeamMsgModel.getInstance().init();
-        TeamMsgModel.getInstance().actListeners();
-        TeamModel.getInstance().actListeners();
-        MsgModel.getInstance().actListeners();
-        FriendModel.getInstance().actListeners();
 
-
-        new NetTaskCode(new NetTaskCodeListener() {
-            @Override
-            public void before() { }
-
-            @Override
-            public int middle() {
-                FriendModel.getInstance().flush();
-                TeamModel.getInstance().NET_flushTeam();
-                MsgModel.getInstance().doFlush();
-                RequestModel.getInstance().loadRequest();
-                return 0;
-            }
-
-            @Override
-            public void after(int code) {
-                MsgModel.getInstance().actListeners();
-                FriendModel.getInstance().actListeners();
-                RequestModel.getInstance().actListeners();
-                TeamModel.getInstance().actListeners();
-            }
-        }).execute();
     }
 
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+    }
+
     private void initLayout(){
         txtTitle = findViewById(R.id.txt_title);
-
 
         msgFrag = new MsgFragment();
         friendFrag = new FriendFragment();
@@ -168,16 +152,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         replaceFragment(0);
     }
 
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_msg:
                 replaceFragment(0);
                 break;
@@ -190,33 +167,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             case R.id.btn_own:
                 replaceFragment(3);
                 break;
-            case R.id.btn_exit:
-                Intent intent1 = new Intent(this, MyService.class);
-                stopService(intent1);
-                Intent intent = new Intent(App.DESTORY_PIPE);
-                LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-                localBroadcastManager.sendBroadcast(intent);
-                SharedPreferences sharedPreferences = getSharedPreferences("currentUser", Context.MODE_PRIVATE);
-                sharedPreferences.edit().clear().commit();
-                MyLocalObject.delObject("linkFriends" + "_" + AccountModel.getInstance().currentUser.id);
-                MySqliteHelper.getInstance().clear(ChatBean.class);
-                AccountModel.getInstance().currentUser = null;
-                finish();
-                break;
             case R.id.btn_new_friend:
                 startActivity(new Intent(this, NewFriendActivity.class));
                 break;
         }
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
 
@@ -303,37 +257,21 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
 
 
-    private class ContinueRecvBroadcastReceiver extends BroadcastReceiver {
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
-                case App.RECV_CHAT_ACTION:
-                case App.STATU_CHAT_ACTION:
-                    MsgModel.getInstance().actListeners();
-                    break;
-                case App.GET_ADD_FRIEND_REQUEST:
-                    RequestModel.getInstance().actListeners();
-                    break;
-                case App.LINK_FRIEND_RESPONSE_RECV_OK:
-                    FriendModel.getInstance().actListeners();
-                    break;
-                case App.RECV_TEAM_CHAT_ACTION:
-                    TeamMsgModel.getInstance().actListeners();
-                    break;
-            }
-        }
-    }
 
     @Override
     protected void onDestroy() {
+
+        /**
+         * 移除绑定
+         * 1.移除请求好友列表绑定
+         * 2.移除消息绑定
+         */
         RequestModel.getInstance().listeners.remove(modelListener);
         MsgModel.getInstance().listeners.remove(modelListener);
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        localBroadcastManager.unregisterReceiver(continueRecvBroadcastReceiver);
+        //关闭电源模式
         wl.release();
-        Intent intent = new Intent(this, MyService.class);
-        stopService(intent);
+
         super.onDestroy();
     }
 }

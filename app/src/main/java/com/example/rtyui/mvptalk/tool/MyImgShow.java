@@ -26,7 +26,7 @@ public class MyImgShow {
                 .placeholder(R.mipmap.ic_launcher_round)
                 .override(140, 140)
                 .bitmapTransform(new CropCircleTransformation(new MyBitmapPool()))
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(img);
     }
 
@@ -38,7 +38,7 @@ public class MyImgShow {
                 .placeholder(R.mipmap.ic_launcher_round)
                 .dontAnimate()
                 .override(200, 200)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .fitCenter()
                 .into(img);
     }
@@ -50,7 +50,7 @@ public class MyImgShow {
                 .placeholder(R.mipmap.ic_launcher_round)
                 .dontAnimate()
                 .thumbnail(0.1f)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .fitCenter()
                 .into(img);
     }
@@ -62,7 +62,7 @@ public class MyImgShow {
                 .override(140, 140)
                 .placeholder(R.mipmap.ic_launcher_round)
                 .bitmapTransform(new CropCircleTransformation(new MyBitmapPool()))
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(img);
     }
 
@@ -72,7 +72,7 @@ public class MyImgShow {
                 .dontAnimate()
                 .override(100, 75)
                 .bitmapTransform(new CornersTransform(context,15))
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(img);
     }
 
@@ -83,7 +83,7 @@ public class MyImgShow {
                 .override(140, 140)
                 .placeholder(R.mipmap.ic_launcher_round)
                 .bitmapTransform(new CropCircleTransformation(new MyBitmapPool()))
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(img);
     }
 
@@ -94,7 +94,7 @@ public class MyImgShow {
                 .override(140, 140)
                 .placeholder(R.mipmap.ic_launcher_round)
                 .bitmapTransform(new CropCircleTransformation(new MyBitmapPool()))
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(img);
     }
 

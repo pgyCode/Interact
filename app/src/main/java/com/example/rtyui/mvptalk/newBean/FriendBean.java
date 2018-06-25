@@ -1,6 +1,8 @@
 package com.example.rtyui.mvptalk.newBean;
 
-public class FriendBean {
+import java.io.Serializable;
+
+public class FriendBean implements Serializable {
 
     public int id;
     public String nickname;

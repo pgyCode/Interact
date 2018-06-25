@@ -21,6 +21,7 @@ import com.example.rtyui.mvptalk.tool.MySqliteHelper;
 import com.example.rtyui.mvptalk.tool.NetVisitor;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -52,6 +53,7 @@ public class FriendModel extends Model {
     }
 
     public List<FriendBean> linkFriends = null;
+    public int CURRENT_TALK = -1;
 
 
     /**
@@ -158,5 +160,15 @@ public class FriendModel extends Model {
         catch(Exception e){
             return null;
         }
+    }
+
+
+    /**
+     * 添加一个好友
+     */
+    public void addOne(FriendBean friendBean){
+        if (linkFriends == null)
+            linkFriends = new ArrayList<>();
+        linkFriends.add(friendBean);
     }
 }

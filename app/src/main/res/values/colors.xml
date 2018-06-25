@@ -23,6 +23,7 @@
 
     <color name="T_color_diban_hui">#f8f8f8</color>
     <color name="T_color_talk_hui">#ecedf1</color>
+    <color name="T_color_divider_hui">#c7c8c9</color>
     <color name="T_color_header_orange">#fb6e30</color>
     <color name="T_color_header_pink">#fa5185</color>
     <color name="T_color_txt_grew">#7b7b7b</color>

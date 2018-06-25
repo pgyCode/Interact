@@ -92,13 +92,13 @@ public class TalkActivity extends Activity{
     @Override
     protected void onResume() {
         super.onResume();
-        App.CURRENT_TALK = userId;
+        FriendModel.getInstance().CURRENT_TALK = userId;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        App.CURRENT_TALK = -1;
+        FriendModel.getInstance().CURRENT_TALK = -1;
     }
 
     private void initLayout(){

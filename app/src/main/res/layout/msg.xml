@@ -8,7 +8,9 @@
         android:layout_width="match_parent"
         android:layout_below="@id/title"
         android:id="@+id/lst"
+        android:divider="@null"
         android:layout_height="match_parent">
 
     </com.example.rtyui.androidteach.PullRefreshList.PullRefreshListView>
+
 </RelativeLayout>

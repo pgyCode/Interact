@@ -192,4 +192,15 @@ public class TeamMsgModel extends Model {
         }
         return -1;
     }
+
+    /**
+     * 帮助获取记录大小
+     * @return
+     */
+    public int LOCAL_getSize(){
+        if (comBeans == null)
+            return 0;
+        else
+            return comBeans.size();
+    }
 }

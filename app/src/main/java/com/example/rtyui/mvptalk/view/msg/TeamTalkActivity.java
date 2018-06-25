@@ -67,7 +67,7 @@ public class TeamTalkActivity extends Activity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.talk);
+        setContentView(R.layout.team_talk);
         initLayout();
         listView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -150,13 +150,13 @@ public class TeamTalkActivity extends Activity{
                     }else {
                         Toast.makeText(TeamTalkActivity.this, "权限已申请", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(TeamTalkActivity.this, ChooseAlbumActivity.class);
-                        intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_SENDIMG);
+                        intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_TEAM_SENDIMG);
                         startActivity(intent);
                     }
                 }
                 else{
                     Intent intent = new Intent(TeamTalkActivity.this, ChooseAlbumActivity.class);
-                    intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_SENDIMG);
+                    intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_TEAM_SENDIMG);
                     startActivity(intent);
                 }
             }
@@ -172,13 +172,13 @@ public class TeamTalkActivity extends Activity{
                     }else {
                         Toast.makeText(TeamTalkActivity.this, "权限已申请", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(TeamTalkActivity.this, FileChooseActivity.class);
-                        intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_SENDIMG);
+                        intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_TEAM_SENDIMG);
                         startActivity(intent);
                     }
                 }
                 else{
                     Intent intent = new Intent(TeamTalkActivity.this, FileChooseActivity.class);
-                    intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_SENDIMG);
+                    intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_TEAM_SENDIMG);
                     startActivity(intent);
                 }
             }
@@ -193,42 +193,42 @@ public class TeamTalkActivity extends Activity{
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-//        int sign = intent.getIntExtra("choose_sign", -1);
-//        switch (sign){
-//            case App.CHOOSE_IMG_INTENT:
-//                String temp = intent.getStringExtra("path");
-//                if (temp != null) {
-//                    final ChatBean chatBean = new ChatBean(id, AccountModel.getInstance().currentUser.id, App.MSG_IMG + "file://" + temp, AccountModel.getInstance().currentUser.nickname, AccountModel.getInstance().currentUser.headImgUrl, FriendModel.getInstance().getUserById(id).nickname, FriendModel.getInstance().getUserById(id).headImgUrl, System.currentTimeMillis());
-//                    MsgModel.getInstance().add(chatBean);
-//                    MsgModel.getInstance().actListeners();
-//                    try {
-//                        final AVFile file = AVFile.withAbsoluteLocalPath("LeanCloud.png", temp);
-//                        file.saveInBackground(new SaveCallback() {
-//                            @Override
-//                            public void done(AVException e) {
-//                                if (e == null)
-//                                    doSend(new ChatBean(id, AccountModel.getInstance().currentUser.id, App.MSG_IMG + file.getUrl(), AccountModel.getInstance().currentUser.nickname, AccountModel.getInstance().currentUser.headImgUrl, FriendModel.getInstance().getUserById(id).nickname, FriendModel.getInstance().getUserById(id).headImgUrl, chatBean.time));
-//                                else {
-//                                    MsgModel.getInstance().changeStatu(chatBean.time, App.MSG_SEND_BAD);
-//                                    MsgModel.getInstance().actListeners();
-//                                }
-//                            }
-//                        }, new ProgressCallback() {
-//                            @Override
-//                            public void done(Integer integer) {
-//
-//                            }
-//                        });
-//                    } catch (FileNotFoundException e) {
-//                        e.printStackTrace();
-//                        MsgModel.getInstance().changeStatu(chatBean.time, App.MSG_SEND_BAD);
-//                        MsgModel.getInstance().actListeners();
-//                    }
-//                }
-//                break;
-//            case App.CHOOSE_FILE_INTENT:
-//                break;
-//        }
+        int sign = intent.getIntExtra("choose_sign", -1);
+        switch (sign){
+            case App.CHOOSE_IMG_INTENT:
+                String temp = intent.getStringExtra("path");
+                if (temp != null) {
+                    final TeamChatBean chatBean = new TeamChatBean(AccountModel.getInstance().currentUser.id, id, App.MSG_IMG + "file://" + temp, System.currentTimeMillis());
+                    TeamMsgModel.getInstance().add(chatBean);
+                    TeamMsgModel.getInstance().actListeners();
+                    try {
+                        final AVFile file = AVFile.withAbsoluteLocalPath("LeanCloud.png", temp);
+                        file.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(AVException e) {
+                                if (e == null)
+                                    doSend(new TeamChatBean(AccountModel.getInstance().currentUser.id, id, App.MSG_IMG + file.getUrl(), chatBean.time));
+                                else {
+                                    TeamMsgModel.getInstance().changeStatu(chatBean.time, App.MSG_SEND_BAD);
+                                    TeamMsgModel.getInstance().actListeners();
+                                }
+                            }
+                        }, new ProgressCallback() {
+                            @Override
+                            public void done(Integer integer) {
+
+                            }
+                        });
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        TeamMsgModel.getInstance().changeStatu(chatBean.time, App.MSG_SEND_BAD);
+                        TeamMsgModel.getInstance().actListeners();
+                    }
+                }
+                break;
+            case App.CHOOSE_FILE_INTENT:
+                break;
+        }
 
     }
 
@@ -248,7 +248,7 @@ public class TeamTalkActivity extends Activity{
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     Toast.makeText(this, "权限已申请", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(TeamTalkActivity.this, ChooseAlbumActivity.class);
-                    intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_SENDIMG);
+                    intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_TEAM_SENDIMG);
                     startActivity(intent);
                 }else{
                     AlertDialog.Builder dialog = new AlertDialog.Builder(this).setTitle("权限申请").setMessage("为了能够设设置头像，请允许我们使用读取文件权限")

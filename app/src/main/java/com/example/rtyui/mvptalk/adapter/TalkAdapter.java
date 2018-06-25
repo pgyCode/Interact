@@ -118,6 +118,7 @@ public class TalkAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(context, ImgShowActivity.class);
+                        intent.putExtra("sign", App.PHOTO_SHOW_SIGN_SENDIMG);
                         intent.putExtra("id", id);
                         intent.putExtra("position", position);
                         context.startActivity(intent);
@@ -168,6 +169,7 @@ public class TalkAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(context, ImgShowActivity.class);
+                        intent.putExtra("sign", App.PHOTO_SHOW_SIGN_SENDIMG);
                         intent.putExtra("id", id);
                         intent.putExtra("position", position);
                         context.startActivity(intent);

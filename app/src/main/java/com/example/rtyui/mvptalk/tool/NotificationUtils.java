@@ -11,6 +11,9 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 
 import com.example.rtyui.mvptalk.bean.ChatBean;
+import com.example.rtyui.mvptalk.model.FriendModel;
+import com.example.rtyui.mvptalk.model.MsgModel;
+import com.example.rtyui.mvptalk.view.main.MainActivity;
 import com.example.rtyui.mvptalk.view.msg.TalkActivity;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -44,14 +47,11 @@ public class NotificationUtils {
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
     public Notification.Builder getChannelNotification(ChatBean chatBean){
-        Intent intent = new Intent(context, TalkActivity.class);
-        intent.putExtra("userId", chatBean.getSendId());
-        intent.putExtra("nickname", chatBean.getSendNickname());
-        intent.putExtra("headImgUrl", chatBean.getSendHeadImgUrl());
+        Intent intent = new Intent(context, MainActivity.class);
 
         return new Notification.Builder(context.getApplicationContext(), id)
-                .setContentTitle(chatBean.getSendNickname())
-                .setContentText(chatBean.getMsg())
+                .setContentTitle("消息提醒(" + FriendModel.getInstance().getUserById(chatBean.sendId).remark + ")")
+                .setContentText("你有" + MsgModel.getInstance().getUnread() + "条未读消息")
                 .setAutoCancel(true).setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(Notification.PRIORITY_MAX)
                 .setSmallIcon(android.R.drawable.stat_notify_more)
@@ -59,15 +59,10 @@ public class NotificationUtils {
                 .setContentIntent(PendingIntent.getActivity(context, 0, intent, 0));
     }
     public NotificationCompat.Builder getNotification_25(ChatBean chatBean){
-        Intent intent = new Intent(context, TalkActivity.class);
-        System.out.println("现在的放入id " + chatBean.getSendId());
-        intent.putExtra("userId", chatBean.getSendId());
-        System.out.println("现在的放入----id " + intent.getIntExtra("id", -1));
-        intent.putExtra("nickname", chatBean.getSendNickname());
-        intent.putExtra("headImgUrl", chatBean.getSendHeadImgUrl());
+        Intent intent = new Intent(context, MainActivity.class);
         return new NotificationCompat.Builder(context.getApplicationContext())
-                .setContentTitle(chatBean.getSendNickname())
-                .setContentText(chatBean.getMsg())
+                .setContentTitle("消息提醒(" + FriendModel.getInstance().getUserById(chatBean.sendId).remark + ")")
+                .setContentText("你有" + MsgModel.getInstance().getUnread() + "条未读消息")
                 .setAutoCancel(true).setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setSmallIcon(android.R.drawable.stat_notify_more)

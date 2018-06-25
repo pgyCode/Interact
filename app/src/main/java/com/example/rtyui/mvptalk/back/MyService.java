@@ -28,6 +28,7 @@ import com.example.rtyui.mvptalk.newBean.FriendBean;
 import com.example.rtyui.mvptalk.newBean.TeamChatBean;
 import com.example.rtyui.mvptalk.tool.AbstractNetTaskCode;
 import com.example.rtyui.mvptalk.tool.App;
+import com.example.rtyui.mvptalk.tool.ForeBackUtils;
 import com.example.rtyui.mvptalk.tool.MySqliteHelper;
 import com.example.rtyui.mvptalk.tool.NetTaskCode;
 import com.example.rtyui.mvptalk.tool.NetTaskCodeListener;
@@ -124,6 +125,7 @@ public class MyService extends Service {
     }
 
     public void closeSocket() {
+        System.out.println("有没有执行");
         try {
             if (dataOutputStream != null) dataOutputStream.close();
             if (dataInputStream != null) dataInputStream.close();
@@ -139,12 +141,11 @@ public class MyService extends Service {
         return null;
     }
 
+
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        sendMessager = Executors.newFixedThreadPool(2);
-        fixer = Executors.newSingleThreadExecutor();
-        fixer.execute(new Fix());
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
     private class Fix implements Runnable{
@@ -265,6 +266,7 @@ public class MyService extends Service {
             }
         }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -276,6 +278,9 @@ public class MyService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        sendMessager = Executors.newFixedThreadPool(2);
+        fixer = Executors.newSingleThreadExecutor();
+        fixer.execute(new Fix());
 
         myBroadcastReceiver = new MyBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
@@ -293,11 +298,16 @@ public class MyService extends Service {
     private void dealSendChatAction(String str){
         ChatBean chatBean = new Gson().fromJson(str, ChatBean.class);
 
-        if (App.CURRENT_TALK < 0){
+        if (FriendModel.getInstance().CURRENT_TALK == chatBean.sendId){
+            System.out.println("当前消息");
+            MsgModel.getInstance().add(chatBean);
+        }else if (ForeBackUtils.isApplicationBroughtToBackground(this)){
+            System.out.println("后台消息");
             MsgModel.getInstance().addUnread(chatBean);
             new NotificationUtils(MyService.this).sendNotification(chatBean);
         }else{
-            MsgModel.getInstance().flush(chatBean);
+            System.out.println("前台消息");
+            MsgModel.getInstance().addUnread(chatBean);
         }
 
         Intent intent = new Intent(App.RECV_CHAT_ACTION);
@@ -316,7 +326,7 @@ public class MyService extends Service {
 
     private void dealRecvAddFriendAction(String str){
         AddFriendBean bean = new Gson().fromJson(str, AddFriendBean.class);
-        FriendModel.getInstance().linkFriends.add(new FriendBean(bean.sendId, bean.sendNickname, bean.sendHeadImgUrl, bean.sendNickname));
+        FriendModel.getInstance().addOne(new FriendBean(bean.sendId, bean.sendNickname, bean.sendHeadImgUrl, bean.sendNickname));
         Intent intent = new Intent(App.LINK_FRIEND_RESPONSE_RECV_OK);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(MyService.this);
         localBroadcastManager.sendBroadcast(intent);

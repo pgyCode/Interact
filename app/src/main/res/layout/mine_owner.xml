@@ -35,6 +35,7 @@
         <RelativeLayout
             android:layout_marginTop="16dp"
             android:layout_width="match_parent"
+            android:id="@+id/btn_img"
             android:background="@color/white"
             android:layout_height="70dp">
             <TextView
@@ -58,6 +59,7 @@
         <RelativeLayout
             android:layout_marginTop="16dp"
             android:layout_width="match_parent"
+            android:id="@+id/btn_nick"
             android:background="@color/white"
             android:layout_height="50dp">
             <TextView
