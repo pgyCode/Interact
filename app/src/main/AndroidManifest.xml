@@ -29,16 +29,15 @@
 
         <activity android:name=".view.main.MainActivity" android:launchMode="singleTask"/>
         <activity android:name=".view.friend.AddFriendActivity"/>
-        <activity android:name=".view.friend.AddFriendPageActivity"/>
         <activity android:name=".view.friend.NewFriendActivity"/>
 
-        <activity android:name=".view.team.TeamAddActivity"/>
         <activity android:name=".view.team.TeamCreateActivity"/>
         <activity android:name=".view.msg.TeamTalkActivity"
             android:launchMode="singleTask"/>
-        <activity android:name=".view.teamer.TeamIndexActivity"/>
+        <activity android:name=".view.team.AddTeamActivity"/>
+        <activity android:name=".view.team.TeamIndexActivity"/>
+        <activity android:name=".view.team.AskerActivity"/>
 
-        <activity android:name=".view.user.UserIndexDelFriendActivity"/>
         <activity android:name=".view.user.UserIndexChangeRemarkActivity"/>
         <activity android:name=".view.user.UserIndexActivity"/>
 

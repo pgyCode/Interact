@@ -10,11 +10,6 @@ public class TeamBean implements Serializable {
     public int id;
     public String nickname;
     public String headImgUrl;
-    public List<TeamMemberBean> members;
-
-    public TeamBean(int id, String nickname, String headImgUrl){
-        this.id = id;
-        this.nickname = nickname;
-        this.headImgUrl = headImgUrl;
-    }
+    public int uid;
+    public String remark = "备注";
 }

@@ -1,5 +1,7 @@
 package com.example.rtyui.mvptalk.bean;
 
+import com.example.rtyui.mvptalk.tool.App;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -8,17 +10,13 @@ import java.util.List;
  */
 
 public class ComBean implements Serializable {
-    public int userId;
-    public String nickname;
-    public String headImgUrl;
-    public int unread;
-    public long time;
+    public int id;
+    public int category = App.CATEGORY_FRIEND;
     public List<ChatBean> chats;
 
-    public ComBean(int userId, String nickname, String headImgUrl, List<ChatBean> chats){
-        this.userId = userId;
-        this.nickname = nickname;
-        this.headImgUrl = headImgUrl;
+    public ComBean(int id, int category, List<ChatBean> chats){
+        this.category = category;
+        this.id = id;
         this.chats = chats;
     }
 }

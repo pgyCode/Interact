@@ -2,6 +2,7 @@ package com.example.rtyui.mvptalk.view.friend;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -11,9 +12,16 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.rtyui.mvptalk.R;
+import com.example.rtyui.mvptalk.back.Msger;
+import com.example.rtyui.mvptalk.bean.ActionBean;
 import com.example.rtyui.mvptalk.bean.AddFriendBean;
+import com.example.rtyui.mvptalk.bean.InfoActionBean;
 import com.example.rtyui.mvptalk.model.AccountModel;
+import com.example.rtyui.mvptalk.model.RequestModel;
 import com.example.rtyui.mvptalk.tool.App;
+import com.example.rtyui.mvptalk.tool.NetTaskCode;
+import com.example.rtyui.mvptalk.tool.NetTaskCodeListener;
+import com.example.rtyui.mvptalk.view.main.MainActivity;
 import com.google.gson.Gson;
 
 /**
@@ -50,40 +58,33 @@ public class AddFriendActivity extends Activity{
                 if (temp.equals("")){
                     return;
                 }
+                new NetTaskCode(new NetTaskCodeListener() {
+                    @Override
+                    public void before() {
+                        startActivity(new Intent(AddFriendActivity.this, MainActivity.class));
+                    }
 
-                Intent intent = new Intent(AddFriendActivity.this, AddFriendPageActivity.class);
-                intent.putExtra("id", Integer.valueOf(temp));
-                startActivity(intent);
+                    @Override
+                    public int middle() {
+                        return RequestModel.getInstance().addFriend(Integer.valueOf(temp));
+                    }
+
+                    @Override
+                    public void after(int code) {
+                        if (code == App.NET_SUCCEED){
+                            Toast.makeText(AddFriendActivity.this, "发送成功", Toast.LENGTH_SHORT).show();
+                            long time = System.currentTimeMillis();
+                            App.sendBroadCast(App.SEND_ACTION,
+                                    new Msger(time, App.C2S_ADD_FRIEND,
+                                            new Gson().toJson(
+                                                    new InfoActionBean(AccountModel.getInstance().currentUser.id,
+                                                                        AccountModel.getInstance().currentUser.nickname,
+                                                                        AccountModel.getInstance().currentUser.headImgUrl, Integer.parseInt(temp), time))).toString());
+                        }else
+                            Toast.makeText(AddFriendActivity.this, "发送失败", Toast.LENGTH_SHORT).show();
+                    }
+                }).execute();
             }
         });
-    }
-
-    public void beforeAddFriend() {
-        loading.setVisibility(View.VISIBLE);
-    }
-
-    public void afterAddfriend(int code) {
-        loading.setVisibility(View.GONE);
-        switch (code){
-            case NET_FAil:
-                Toast.makeText(this, "可能对方已经收到你的好友请求了哦", Toast.LENGTH_SHORT).show();
-                break;
-            case LOGIN_SUCCEED:
-                Toast.makeText(this, "请求成功，请等待", Toast.LENGTH_SHORT).show();
-                sendBroadCast();
-                break;
-        }
-    }
-
-    private void sendBroadCast(){
-        Intent intent = new Intent(App.SEND_ADD_FRIEND_ACTION);
-
-        AddFriendBean addFriendBean = new AddFriendBean(AccountModel.getInstance().currentUser.id,
-                AccountModel.getInstance().currentUser.nickname,
-                AccountModel.getInstance().currentUser.headImgUrl,
-                Integer.parseInt(((EditText)findViewById(R.id.edt_id)).getText().toString().trim()));
-        intent.putExtra("data", new Gson().toJson(addFriendBean));
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        localBroadcastManager.sendBroadcast(intent);
     }
 }

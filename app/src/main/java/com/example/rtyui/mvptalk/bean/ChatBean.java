@@ -11,16 +11,14 @@ import java.io.Serializable;
 /**
  * 存储一条chat消息对应的数据
  */
-public class ChatBean{
+public class ChatBean implements Serializable{
     public int recvId;
     public int sendId;
+    public int category = App.CATEGORY_FRIEND;
     public int statu = App.MSG_SEND_ING;
+    public int read = App.MSG_READ;
     public long time;
     public String msg;
-    public String sendNickname;
-    public String sendHeadImgUrl;
-    public String recvNickname;
-    public String recvHeadImgUrl;
 
     public void setMsg(String msg) {
         this.msg = msg;
@@ -46,49 +44,12 @@ public class ChatBean{
         return recvId;
     }
 
-
-
-    public void setSendNickname(String sendNickname) {
-        this.sendNickname = sendNickname;
-    }
-
-    public String getSendNickname() {
-        return sendNickname;
-    }
-
-    public void setSendHeadImgUrl(String sendHeadImgUrl) {
-        this.sendHeadImgUrl = sendHeadImgUrl;
-    }
-
-    public String getSendHeadImgUrl() {
-        return sendHeadImgUrl;
-    }
-
-    public ChatBean(int recvId, int sendId, String msg, String sendNickname, String sendHeadImgUrl, String recvNickname, String recvHeadImgUrl, long time){
+    public ChatBean(int recvId, int sendId, String msg, long time, int category){
         this.recvId = recvId;
         this.sendId = sendId;
         this.msg = msg;
-        this.sendNickname = sendNickname;
-        this.sendHeadImgUrl = sendHeadImgUrl;
-        this.recvNickname = recvNickname;
-        this.recvHeadImgUrl = recvHeadImgUrl;
         this.time = time;
-    }
-
-    public void setrecvHeadImgUrl(String recvHeadImgUrl) {
-        this.recvHeadImgUrl = recvHeadImgUrl;
-    }
-
-    public void setrecvNickname(String recvNickname) {
-        this.recvNickname = recvNickname;
-    }
-
-    public String getrecvHeadImgUrl() {
-        return recvHeadImgUrl;
-    }
-
-    public String getrecvNickname() {
-        return recvNickname;
+        this.category = category;
     }
 
     public ChatBean(){

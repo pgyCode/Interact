@@ -30,8 +30,6 @@ dependencies {
     implementation files('libs/glide-transformations-1.0.5.jar')
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support:design:27.1.1'
-    implementation project(':SideSlip')
-    implementation project(':PullUpAndPullDown')
     implementation files('libs/avoscloud-sdk-v3.16.jar')
     implementation files('libs/fastjson.jar')
     implementation files('libs/okhttp-2.6.0-leancloud.jar')

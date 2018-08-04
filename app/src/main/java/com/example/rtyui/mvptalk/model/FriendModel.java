@@ -1,31 +1,18 @@
 package com.example.rtyui.mvptalk.model;
 
-import android.accounts.Account;
-import android.icu.text.UFormat;
-
-import com.example.rtyui.mvptalk.Msg.GroupMsg;
 import com.example.rtyui.mvptalk.Msg.Msg;
-import com.example.rtyui.mvptalk.Msg.MsgLinkFriend;
-import com.example.rtyui.mvptalk.Msg.MsgRequest;
-import com.example.rtyui.mvptalk.Msg.UserMsg;
-import com.example.rtyui.mvptalk.bean.AddFriendBean;
 import com.example.rtyui.mvptalk.bean.ChatBean;
-import com.example.rtyui.mvptalk.bean.Group;
-import com.example.rtyui.mvptalk.bean.GroupBean;
+import com.example.rtyui.mvptalk.bean.ComBean;
 import com.example.rtyui.mvptalk.newBean.FriendBean;
 import com.example.rtyui.mvptalk.newMsg.FriendFlushMsg;
 import com.example.rtyui.mvptalk.parent.Model;
 import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.MyLocalObject;
-import com.example.rtyui.mvptalk.tool.MySqliteHelper;
 import com.example.rtyui.mvptalk.tool.NetVisitor;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-
-import javax.xml.transform.Source;
 
 /**
  * Created by rtyui on 2018/4/25.
@@ -81,6 +68,14 @@ public class FriendModel extends Model {
             if (msg.code == App.NET_SUCCEED){
                 linkFriends = msg.data;
                 MyLocalObject.saveObject("linkFriends_" + AccountModel.getInstance().currentUser.id, linkFriends);
+                if (MsgModel.getInstance().comBeans != null) {
+                    for (ComBean bean : MsgModel.getInstance().comBeans) {
+                        if ((bean.category == App.CATEGORY_FRIEND && FriendModel.getInstance().getUserById(bean.id) == null) ||
+                                (bean.category == App.CATEGORY_TEAM && TeamModel.getInstance().OUTER_getTeamById(bean.id) == null) ) {
+                            MsgModel.getInstance().delFriendFromLocal(bean.id);
+                        }
+                    }
+                }
             }
             return msg.code;
         }
@@ -132,18 +127,18 @@ public class FriendModel extends Model {
             Msg msg = new Gson().fromJson(temp, Msg.class);
             if (msg.code == App.NET_SUCCEED)
             {
-                linkFriends.remove(getUserById(id));
-                MsgModel.getInstance().comBeans.remove(MsgModel.getInstance().getCombeanById(id));
-                MySqliteHelper.getInstance().delete(ChatBean.class, "recvId=" +
-                        id +
-                        " or sendId=" +
-                        id);
-                MyLocalObject.saveObject("linkFriends_" + AccountModel.getInstance().currentUser.id, linkFriends);
+                delFriendFromLocal(id);
             }
             return msg.code;
         }catch (Exception e){
             return App.NET_FAil;
         }
+    }
+
+    public void delFriendFromLocal(int id){
+        linkFriends.remove(getUserById(id));
+        MyLocalObject.saveObject("linkFriends_" + AccountModel.getInstance().currentUser.id, linkFriends);
+        MsgModel.getInstance().delFriendFromLocal(id);
     }
 
     /**

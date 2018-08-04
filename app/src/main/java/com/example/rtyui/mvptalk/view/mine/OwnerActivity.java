@@ -24,6 +24,8 @@ import com.example.rtyui.mvptalk.model.AccountModel;
 import com.example.rtyui.mvptalk.parent.OnModelChangeListener;
 import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.MyImgShow;
+import com.example.rtyui.mvptalk.tool.permission.OnAskAppearListener;
+import com.example.rtyui.mvptalk.tool.permission.PermissionAsker;
 
 import java.lang.ref.WeakReference;
 import java.security.acl.Owner;
@@ -35,6 +37,8 @@ public class OwnerActivity extends Activity {
     private ImageView imgHead = null;
 
     private OnModelChangeListener modelListener;
+
+    private PermissionAsker fileAsker = null;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,26 +54,20 @@ public class OwnerActivity extends Activity {
             }
         });
         imgHead = findViewById(R.id.img_head);
+
+        fileAsker = new PermissionAsker(this, new OnAskAppearListener() {
+            @Override
+            public void onAppear() {
+                Intent intent = new Intent(OwnerActivity.this, ChooseAlbumActivity.class);
+                intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_CUTIMG);
+                startActivity(intent);
+            }
+        },Manifest.permission.READ_EXTERNAL_STORAGE, 2, 2, "为了读取可用图片，请允许我们使用读取文件权限", true);
+
         findViewById(R.id.btn_img).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (ActivityCompat.checkSelfPermission(OwnerActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        OwnerActivity.this.requestPermissions(
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
-                    }else {
-                        Toast.makeText(OwnerActivity.this, "权限已申请", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(OwnerActivity.this, ChooseAlbumActivity.class);
-                        intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_CUTIMG);
-                        startActivity(intent);
-                    }
-                }
-                else{
-                    Intent intent = new Intent(OwnerActivity.this, ChooseAlbumActivity.class);
-                    intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_CUTIMG);
-                    startActivity(intent);
-                }
+                fileAsker.onAsk();
             }
         });
 
@@ -99,40 +97,13 @@ public class OwnerActivity extends Activity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 2){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Toast.makeText(this, "权限已申请", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(OwnerActivity.this, ChooseAlbumActivity.class);
-                    intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_CUTIMG);
-                    startActivity(intent);
-                }else{
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(this).setTitle("权限申请").setMessage("为了能够设设置头像，请允许我们使用读取文件权限")
-                            .setPositiveButton("立即开启", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    goToAppSetting();
-                                }
-                            }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-                    dialog.show();
-                }
-            }
-        }
+        fileAsker.onChoose(requestCode, grantResults);
     }
 
-    // 跳转到当前应用的设置界面
-    private void goToAppSetting() {
-        Intent intent = new Intent();
-        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", this.getPackageName(), null);
-        intent.setData(uri);
-        startActivityForResult(intent, 123);
-        return;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        fileAsker.onSet(requestCode);
     }
 
     @Override

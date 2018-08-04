@@ -2,7 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/T_color_diban_hui"
+    android:background="@color/white"
     android:orientation="vertical">
     
     <LinearLayout
@@ -13,12 +13,11 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:id="@+id/btn_owner"
-            android:background="@color/white"
-            android:layout_marginTop="16dp">
+            android:background="@color/white">
             <ImageView
                 android:layout_width="100dp"
                 android:id="@+id/img_head"
-                android:padding="10dp"
+                android:padding="15dp"
                 android:src="@mipmap/ic_launcher"
                 android:layout_height="100dp" />
             <TextView
@@ -37,73 +36,190 @@
                 android:paddingLeft="10dp"
                 android:gravity="center_vertical"
                 android:textColor="@color/black"
-                android:textSize="17sp"
+                android:textSize="15sp"
                 android:layout_below="@id/txt_nick"
                 android:layout_height="50dp"
                 android:layout_alignLeft="@id/txt_nick"
                 android:id="@+id/txt_id"/>
         </RelativeLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/mygrew"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:id="@+id/btn_exit"
-            android:layout_marginTop="16dp"
+            android:id="@+id/btn_warn"
             android:background="@color/white"
             android:orientation="horizontal"
-            android:layout_height="50dp">
-            <ImageView
-                android:layout_width="50dp"
-                android:padding="11dp"
-                android:layout_height="50dp"
-                android:src="@drawable/send_fail"/>
+            android:layout_height="60dp">
+            <View
+                android:layout_width="12dp"
+                android:layout_margin="24dp"
+                android:background="@color/T_main"
+                android:layout_height="12dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:text="好友申请"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="New"
+                android:textSize="13sp"
+                android:id="@+id/txt_warn"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:background="@color/red"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/mygrew"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:id="@+id/btn_teamwarn"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:layout_height="60dp">
+            <View
+                android:layout_width="12dp"
+                android:layout_margin="24dp"
+                android:background="@color/T_main"
+                android:layout_height="12dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:text="群组申请"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="New"
+                android:textSize="13sp"
+                android:id="@+id/txt_teamwarn"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:background="@color/red"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/mygrew"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:id="@+id/btn_create_team"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:layout_height="60dp">
+            <View
+                android:layout_width="12dp"
+                android:layout_margin="24dp"
+                android:background="@color/T_main"
+                android:layout_height="12dp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:textSize="17sp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:text="创建群组"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/mygrew"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:id="@+id/btn_folder"
+            android:visibility="gone"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:layout_height="60dp">
+            <View
+                android:layout_width="12dp"
+                android:layout_margin="24dp"
+                android:background="@color/T_main"
+                android:layout_height="12dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:text="查看文件"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/mygrew"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:id="@+id/btn_exit"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:layout_height="60dp">
+            <View
+                android:layout_width="12dp"
+                android:layout_margin="24dp"
+                android:background="@color/T_main"
+                android:layout_height="12dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="15sp"
                 android:textColor="@color/black"
                 android:text="退出"/>
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/mygrew"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:id="@+id/btn_clear"
-            android:layout_marginTop="16dp"
             android:background="@color/white"
             android:orientation="horizontal"
-            android:layout_height="50dp">
-            <ImageView
-                android:layout_width="50dp"
-                android:padding="11dp"
-                android:layout_height="50dp"
-                android:src="@drawable/send_fail"/>
+            android:layout_height="60dp">
+            <View
+                android:layout_width="12dp"
+                android:layout_margin="24dp"
+                android:background="@color/T_main"
+                android:layout_height="12dp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:textSize="17sp"
+                android:textSize="15sp"
                 android:textColor="@color/black"
                 android:text="注销"/>
         </LinearLayout>
-        <LinearLayout
+
+        <View
             android:layout_width="match_parent"
-            android:id="@+id/btn_folder"
-            android:layout_marginTop="16dp"
-            android:background="@color/white"
-            android:orientation="horizontal"
-            android:layout_height="50dp">
-            <ImageView
-                android:layout_width="50dp"
-                android:padding="11dp"
-                android:layout_height="50dp"
-                android:src="@drawable/send_fail"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:textSize="17sp"
-                android:textColor="@color/black"
-                android:text="指定文件夹"/>
-        </LinearLayout>
+            android:layout_height="1px"
+            android:background="@color/mygrew"/>
     </LinearLayout>
+
 </RelativeLayout>

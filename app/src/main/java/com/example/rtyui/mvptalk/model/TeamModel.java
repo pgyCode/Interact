@@ -1,8 +1,8 @@
 package com.example.rtyui.mvptalk.model;
 
+import android.accounts.Account;
+
 import com.example.rtyui.mvptalk.newBean.TeamBean;
-import com.example.rtyui.mvptalk.newBean.TeamMemberBean;
-import com.example.rtyui.mvptalk.newMsg.Msg;
 import com.example.rtyui.mvptalk.newMsg.TeamCreateMsg;
 import com.example.rtyui.mvptalk.newMsg.TeamFlushMsg;
 import com.example.rtyui.mvptalk.parent.Model;
@@ -30,6 +30,7 @@ public class TeamModel extends Model {
         return instance;
     }
 
+    public int CURRENT_TALK = -1;
     public static synchronized void dstroyInstance() {
         if (instance != null) instance = null;
     }
@@ -48,21 +49,11 @@ public class TeamModel extends Model {
      */
     public int NET_flushTeam(){
         try{
-            String temp = NetVisitor.postNormal(App.host + "Talk/user/regist", "");
-            TeamFlushMsg msg = new TeamFlushMsg();// = new Gson().fromJson(temp, TeamFlushMsg.class);
-            //---测试
-            msg.code = 2;
-            msg.data = new LinkedList<>();
-            msg.data.add(new TeamBean(0, "测试群组", "https://imgsrc.baidu.com/baike/pic/item/35a85edf8db1cb13dc1af6c0d654564e93584bf6.jpg"));
-            //---
+            String temp = NetVisitor.postNormal(App.host + "Talk/team/myTeam", "uId=" +
+                    AccountModel.getInstance().currentUser.id);
+            TeamFlushMsg msg = new Gson().fromJson(temp, TeamFlushMsg.class);
             if (msg.code == App.NET_SUCCEED){
                 teamBeans = msg.data;
-                teamBeans.get(0).members = new LinkedList<>();
-                teamBeans.get(0).members.add(new TeamMemberBean(0,"样密", "http://lc-X6aWf1qq.cn-n1.lcfile.com/jLBbP7vwWmpfpBHgAI8XsttDfDkrVVYnKpVfNrPZ.png"));
-                teamBeans.get(0).members.add(new TeamMemberBean(4,"mi", "http://lc-X6aWf1qq.cn-n1.lcfile.com/Eh0tLPOXIHpcheoONeArRj65f35TBfpJBrsFAksF.png"));
-                teamBeans.get(0).members.add(new TeamMemberBean(5,"hsm like tty", "http://lc-X6aWf1qq.cn-n1.lcfile.com/wFGMlU0nNSAvZPKOylvsw15kNXLfJP8H6Kk2Llqf.png"));
-                teamBeans.get(0).members.add(new TeamMemberBean(15,"中文", "http://lc-X6aWf1qq.cn-n1.lcfile.com/jLBbP7vwWmpfpBHgAI8XsttDfDkrVVYnKpVfNrPZ.png"));
-                teamBeans.get(0).members.add(new TeamMemberBean(16,"寻寻幂幂", "http://lc-X6aWf1qq.cn-n1.lcfile.com/hMnTLU25rtUcSJf7tZDZij61cKXIqm8ArVZP1X95.png"));
                 MyLocalObject.saveObject("teams_" + AccountModel.getInstance().currentUser.id, teamBeans);
             }
             return msg.code;
@@ -75,28 +66,16 @@ public class TeamModel extends Model {
 
 
     /**
-     * 网络请求：添加群组
-     * @param id
-     * @return
-     */
-    public int NET_addTeam(int id){
-        try{
-            String temp = NetVisitor.postNormal(App.host + "Talk/user/regist", "");
-            Msg msg = new Gson().fromJson(temp, Msg.class);
-            return msg.code;
-        }catch(Exception e){
-            return App.NET_FAil;
-        }
-    }
-
-    /**
      * 网络请求：创建群组
      * @param name
      * @return
      */
     public int NET_createTeam(String name){
         try{
-            String temp = NetVisitor.postNormal(App.host + "Talk/user/regist", "");
+            String temp = NetVisitor.postNormal(App.host + "Talk/team/createTeam", "uId=" +
+                    AccountModel.getInstance().currentUser.id +
+                    "&name=" +
+                    name);
             TeamCreateMsg msg = new Gson().fromJson(temp, TeamCreateMsg.class);
             if (msg.code == App.NET_SUCCEED)
                 INNER_addTeam(msg.data);
@@ -111,10 +90,11 @@ public class TeamModel extends Model {
      * 内部功能：添加bean
      * @param bean
      */
-    private void INNER_addTeam(TeamBean bean){
+    private void INNER_addTeam(TeamBean bean) {
         if (teamBeans == null)
             teamBeans = new ArrayList<>();
         teamBeans.add(bean);
+        MyLocalObject.saveObject("teams_" + AccountModel.getInstance().currentUser.id, teamBeans);
     }
 
 
@@ -133,20 +113,20 @@ public class TeamModel extends Model {
 
 
 
-    /**
-     * 外部功能：通过teamId, userId获取memberbean
-     * @param teamId
-     * @param userId
-     * @return
-     */
-    public TeamMemberBean OUTER_getMemberById(int teamId, int userId){
-        List<TeamMemberBean> members = OUTER_getTeamById(teamId).members;
-        for (TeamMemberBean bean : members){
-            if (bean.id == userId)
-                return bean;
-        }
-        return null;
-    }
+//    /**
+//     * 外部功能：通过teamId, userId获取memberbean
+//     * @param teamId
+//     * @param userId
+//     * @return
+//     */
+//    public TeamMemberBean OUTER_getMemberById(int teamId, int userId){
+//        List<TeamMemberBean> members = OUTER_getTeamById(teamId).members;
+//        for (TeamMemberBean bean : members){
+//            if (bean.id == userId)
+//                return bean;
+//        }
+//        return null;
+//    }
 
 
 

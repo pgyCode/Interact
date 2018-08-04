@@ -1,50 +1,38 @@
 package com.example.rtyui.mvptalk.view.main;
 
 import android.app.NotificationManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.view.LayoutInflater;
+import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.rtyui.mvptalk.R;
 import com.example.rtyui.mvptalk.back.MyService;
 import com.example.rtyui.mvptalk.bean.ChatBean;
-import com.example.rtyui.mvptalk.bean.UserBean;
 import com.example.rtyui.mvptalk.model.AccountModel;
 import com.example.rtyui.mvptalk.model.FriendModel;
 import com.example.rtyui.mvptalk.model.MsgModel;
 import com.example.rtyui.mvptalk.model.RequestModel;
 import com.example.rtyui.mvptalk.model.TeamModel;
-import com.example.rtyui.mvptalk.model.TeamMsgModel;
-import com.example.rtyui.mvptalk.newBean.TeamChatBean;
+import com.example.rtyui.mvptalk.model.TeamRequestModel;
+import com.example.rtyui.mvptalk.model.TempUserModel;
 import com.example.rtyui.mvptalk.parent.OnModelChangeListener;
-import com.example.rtyui.mvptalk.tool.App;
-import com.example.rtyui.mvptalk.tool.MyImgShow;
-import com.example.rtyui.mvptalk.tool.MyLocalObject;
-import com.example.rtyui.mvptalk.tool.MySqliteHelper;
-import com.example.rtyui.mvptalk.tool.NetTaskCode;
-import com.example.rtyui.mvptalk.tool.NetTaskCodeListener;
+import com.example.rtyui.mvptalk.model.MySqliteHelper;
 import com.example.rtyui.mvptalk.view.friend.FriendFragment;
-import com.example.rtyui.mvptalk.view.friend.NewFriendActivity;
 import com.example.rtyui.mvptalk.view.msg.MsgFragment;
 import com.example.rtyui.mvptalk.view.own.LeafFragment;
 import com.example.rtyui.mvptalk.view.team.TeamFragment;
 
-import java.lang.ref.WeakReference;
-
-import cn.a527yxy.sideslipdemo.SideSlipLinearLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rtyui on 2018/4/25.
@@ -52,15 +40,17 @@ import cn.a527yxy.sideslipdemo.SideSlipLinearLayout;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener {
 
-    private Fragment msgFrag = null;
-    private Fragment friendFrag = null;
-    private Fragment leafFrag = null;
-    private Fragment teamFrag = null;
+
+    private List<Fragment> fragments;
 
     private TextView txtTitle = null;
-    private TextView txt_unread;
 
-//    private ContinueRecvBroadcastReceiver continueRecvBroadcastReceiver;
+    private TextView txtWarn = null;
+    private TextView txtWarnMore = null;
+
+    private ViewPager viewPager;
+
+    private final int SUM = 4;
 
     private OnModelChangeListener modelListener;
 
@@ -77,7 +67,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
          * 2.创建团队聊天表
          */
         MySqliteHelper.getInstance().mkTable(ChatBean.class);
-        MySqliteHelper.getInstance().mkTable(TeamChatBean.class);
 
         //启动服务
         Intent intent = new Intent(this, MyService.class);
@@ -92,7 +81,20 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "talk:socket");
         wl.acquire();
 
-
+        /**
+         * 初始化本地数据
+         * 1.好友信息
+         * 2.好友聊天信息
+         * 3.团队信息
+         * 4.团队聊天信息
+         */
+        FriendModel.getInstance().init();
+        TeamModel.getInstance().OUTER_init();
+        TempUserModel.getInstance().init();
+        MsgModel.getInstance().init();
+        TeamModel.getInstance().actListeners();
+        MsgModel.getInstance().actListeners();
+        FriendModel.getInstance().actListeners();
     }
 
 
@@ -110,65 +112,98 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private void initLayout(){
         txtTitle = findViewById(R.id.txt_title);
+        txtWarn = findViewById(R.id.txt_warn);
+        txtWarnMore = findViewById(R.id.txt_warn_more);
+        viewPager = findViewById(R.id.viewpager);
 
-        msgFrag = new MsgFragment();
-        friendFrag = new FriendFragment();
-        teamFrag = new TeamFragment();
-        leafFrag = new LeafFragment();
+        fragments = new ArrayList<>();
+        fragments.add(new MsgFragment());
+        fragments.add(new FriendFragment());
+        fragments.add(new TeamFragment());
+        fragments.add(new LeafFragment());
 
-        txt_unread = findViewById(R.id.txt_unread);
+        viewPager.setOffscreenPageLimit(4);
+        viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                return fragments.get(position);
+            }
+
+            @Override
+            public int getCount() {
+                return SUM;
+            }
+        });
+
 
         modelListener = new OnModelChangeListener() {
             @Override
             public void onChange() {
-                int temp = MsgModel.getInstance().getUnread();
-                if (temp == 0)
-                    txt_unread.setVisibility(View.GONE);
-                else{
-                    txt_unread.setVisibility(View.VISIBLE);
-                    txt_unread.setText(temp + "");
+                if (MsgModel.getInstance().getUnread() > 0) {
+                    txtWarn.setVisibility(View.VISIBLE);
+                }else {
+                    txtWarn.setVisibility(View.GONE);
                 }
-                if (RequestModel.getInstance().addFriendBeans != null)
-                    ((TextView)findViewById(R.id.txt_request)).setText(RequestModel.getInstance().addFriendBeans.size() + "");
+                if (RequestModel.getInstance().isWarn() || TeamRequestModel.getInstance().isWarn()){
+                    txtWarnMore.setVisibility(View.VISIBLE);
+                }else{
+                    txtWarnMore.setVisibility(View.GONE);
+                }
+
+                if (!AccountModel.getInstance().onLine) {
+                    findViewById(R.id.sign_offline).setBackgroundResource(R.drawable.red_oval);
+                    findViewById(R.id.sign_online).setBackgroundResource(R.drawable.grew_oval);
+                }else{
+                    findViewById(R.id.sign_online).setBackgroundResource(R.drawable.green_oval);
+                    findViewById(R.id.sign_offline).setBackgroundResource(R.drawable.grew_oval);
+                }
             }
         };
         RequestModel.getInstance().listeners.add(modelListener);
+        TeamRequestModel.getInstance().listeners.add(modelListener);
         MsgModel.getInstance().listeners.add(modelListener);
+        AccountModel.getInstance().listeners.add(modelListener);
 
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction
-                .add(R.id.all, msgFrag)
-                .add(R.id.all, friendFrag)
-                .add(R.id.all, teamFrag)
-                .add(R.id.all, leafFrag)
-                .commit();
         findViewById(R.id.btn_msg).setOnClickListener(this);
         findViewById(R.id.btn_friend).setOnClickListener(this);
         findViewById(R.id.btn_team).setOnClickListener(this);
-        findViewById(R.id.btn_own).setOnClickListener(this);
+        findViewById(R.id.btn_more).setOnClickListener(this);
 
-        findViewById(R.id.btn_new_friend).setOnClickListener(this);
 
         replaceFragment(0);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                replaceFragment(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_msg:
-                replaceFragment(0);
+                viewPager.setCurrentItem(0);
                 break;
             case R.id.btn_friend:
-                replaceFragment(1);
+                viewPager.setCurrentItem(1);
                 break;
             case R.id.btn_team:
-                replaceFragment(2);
+                viewPager.setCurrentItem(2);
                 break;
-            case R.id.btn_own:
-                replaceFragment(3);
-                break;
-            case R.id.btn_new_friend:
-                startActivity(new Intent(this, NewFriendActivity.class));
+            case R.id.btn_more:
+                viewPager.setCurrentItem(3);
                 break;
         }
     }
@@ -178,72 +213,48 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         switch (sign){
             case 0:
-                fragmentTransaction
-                        .show(msgFrag)
-                        .hide(friendFrag)
-                        .hide(teamFrag)
-                        .hide(leafFrag)
-                        .commit();
                 txtTitle.setText("消息");
-                ((ImageView)findViewById(R.id.img_chat)).setImageResource(R.drawable.main_msg_in);
-                ((TextView)findViewById(R.id.txt_chat)).setTextColor(ContextCompat.getColor(this, R.color.color_cheng));
-                ((ImageView)findViewById(R.id.img_friend)).setImageResource(R.drawable.main_friend_out);
-                ((TextView)findViewById(R.id.txt_link)).setTextColor(ContextCompat.getColor(this, R.color.color_blue));
-                ((ImageView)findViewById(R.id.img_leaf)).setImageResource(R.drawable.main_leaf_out);
-                ((TextView)findViewById(R.id.txt_leaf)).setTextColor(ContextCompat.getColor(this, R.color.color_blue));
-                findViewById(R.id.btn_new_friend).setVisibility(View.GONE);
-                findViewById(R.id.btn_team_request).setVisibility(View.GONE);
+                findViewById(R.id.label_msg).setBackgroundResource(R.color.T_main);
+                ((TextView)findViewById(R.id.txt_msg)).setTextColor(ContextCompat.getColor(this, R.color.T_main));
+                findViewById(R.id.label_friend).setBackgroundResource(R.color.T_touming);
+                ((TextView)findViewById(R.id.txt_friend)).setTextColor(ContextCompat.getColor(this, R.color.T_black));
+                findViewById(R.id.label_team).setBackgroundResource(R.color.T_touming);
+                ((TextView)findViewById(R.id.txt_team)).setTextColor(ContextCompat.getColor(this, R.color.T_black));
+                findViewById(R.id.label_more).setBackgroundResource(R.color.T_touming);
+                ((TextView)findViewById(R.id.txt_more)).setTextColor(ContextCompat.getColor(this, R.color.T_black));
                 break;
             case 1:
-                fragmentTransaction
-                        .hide(msgFrag)
-                        .show(friendFrag)
-                        .hide(teamFrag)
-                        .hide(leafFrag)
-                        .commit();
                 txtTitle.setText("联系人");
-                ((ImageView)findViewById(R.id.img_chat)).setImageResource(R.drawable.main_msg_out);
-                ((TextView)findViewById(R.id.txt_chat)).setTextColor(ContextCompat.getColor(this, R.color.color_blue));
-                ((ImageView)findViewById(R.id.img_friend)).setImageResource(R.drawable.main_friend_in);
-                ((TextView)findViewById(R.id.txt_link)).setTextColor(ContextCompat.getColor(this, R.color.color_cheng));
-                ((ImageView)findViewById(R.id.img_leaf)).setImageResource(R.drawable.main_leaf_out);
-                ((TextView)findViewById(R.id.txt_leaf)).setTextColor(ContextCompat.getColor(this, R.color.color_blue));
-                findViewById(R.id.btn_new_friend).setVisibility(View.VISIBLE);
-                findViewById(R.id.btn_team_request).setVisibility(View.GONE);
+                findViewById(R.id.label_msg).setBackgroundResource(R.color.T_touming);
+                ((TextView)findViewById(R.id.txt_msg)).setTextColor(ContextCompat.getColor(this, R.color.T_black));
+                findViewById(R.id.label_friend).setBackgroundResource(R.color.T_main);
+                ((TextView)findViewById(R.id.txt_friend)).setTextColor(ContextCompat.getColor(this, R.color.T_main));
+                findViewById(R.id.label_team).setBackgroundResource(R.color.T_touming);
+                ((TextView)findViewById(R.id.txt_team)).setTextColor(ContextCompat.getColor(this, R.color.T_black));
+                findViewById(R.id.label_more).setBackgroundResource(R.color.T_touming);
+                ((TextView)findViewById(R.id.txt_more)).setTextColor(ContextCompat.getColor(this, R.color.T_black));
                 break;
             case 2:
-                fragmentTransaction
-                        .hide(msgFrag)
-                        .hide(friendFrag)
-                        .show(teamFrag)
-                        .hide(leafFrag)
-                        .commit();
                 txtTitle.setText("团队");
-                ((ImageView)findViewById(R.id.img_chat)).setImageResource(R.drawable.main_msg_out);
-                ((TextView)findViewById(R.id.txt_chat)).setTextColor(ContextCompat.getColor(this, R.color.color_blue));
-                ((ImageView)findViewById(R.id.img_friend)).setImageResource(R.drawable.main_friend_out);
-                ((TextView)findViewById(R.id.txt_link)).setTextColor(ContextCompat.getColor(this, R.color.color_blue));
-                ((ImageView)findViewById(R.id.img_leaf)).setImageResource(R.drawable.main_leaf_out);
-                ((TextView)findViewById(R.id.txt_leaf)).setTextColor(ContextCompat.getColor(this, R.color.color_blue));
-                findViewById(R.id.btn_new_friend).setVisibility(View.GONE);
-                findViewById(R.id.btn_team_request).setVisibility(View.VISIBLE);
+                findViewById(R.id.label_msg).setBackgroundResource(R.color.T_touming);
+                ((TextView)findViewById(R.id.txt_msg)).setTextColor(ContextCompat.getColor(this, R.color.T_black));
+                findViewById(R.id.label_friend).setBackgroundResource(R.color.T_touming);
+                ((TextView)findViewById(R.id.txt_friend)).setTextColor(ContextCompat.getColor(this, R.color.T_black));
+                findViewById(R.id.label_team).setBackgroundResource(R.color.T_main);
+                ((TextView)findViewById(R.id.txt_team)).setTextColor(ContextCompat.getColor(this, R.color.T_main));
+                findViewById(R.id.label_more).setBackgroundResource(R.color.T_touming);
+                ((TextView)findViewById(R.id.txt_more)).setTextColor(ContextCompat.getColor(this, R.color.T_black));
                 break;
             case 3:
-                fragmentTransaction
-                        .hide(msgFrag)
-                        .hide(friendFrag)
-                        .hide(teamFrag)
-                        .show(leafFrag)
-                        .commit();
-                txtTitle.setText("生活");
-                ((ImageView)findViewById(R.id.img_chat)).setImageResource(R.drawable.main_msg_out);
-                ((TextView)findViewById(R.id.txt_chat)).setTextColor(ContextCompat.getColor(this, R.color.color_blue));
-                ((ImageView)findViewById(R.id.img_friend)).setImageResource(R.drawable.main_friend_out);
-                ((TextView)findViewById(R.id.txt_link)).setTextColor(ContextCompat.getColor(this, R.color.color_blue));
-                ((ImageView)findViewById(R.id.img_leaf)).setImageResource(R.drawable.main_leaf_in);
-                ((TextView)findViewById(R.id.txt_leaf)).setTextColor(ContextCompat.getColor(this, R.color.color_cheng));
-                findViewById(R.id.btn_new_friend).setVisibility(View.GONE);
-                findViewById(R.id.btn_team_request).setVisibility(View.GONE);
+                txtTitle.setText("more");
+                findViewById(R.id.label_msg).setBackgroundResource(R.color.T_touming);
+                ((TextView)findViewById(R.id.txt_msg)).setTextColor(ContextCompat.getColor(this, R.color.T_black));
+                findViewById(R.id.label_friend).setBackgroundResource(R.color.T_touming);
+                ((TextView)findViewById(R.id.txt_friend)).setTextColor(ContextCompat.getColor(this, R.color.T_black));
+                findViewById(R.id.label_team).setBackgroundResource(R.color.T_touming);
+                ((TextView)findViewById(R.id.txt_team)).setTextColor(ContextCompat.getColor(this, R.color.T_black));
+                findViewById(R.id.label_more).setBackgroundResource(R.color.T_main);
+                ((TextView)findViewById(R.id.txt_more)).setTextColor(ContextCompat.getColor(this, R.color.T_main));
                 break;
         }
     }
@@ -268,7 +279,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
          * 2.移除消息绑定
          */
         RequestModel.getInstance().listeners.remove(modelListener);
+        TeamRequestModel.getInstance().listeners.remove(modelListener);
         MsgModel.getInstance().listeners.remove(modelListener);
+        AccountModel.getInstance().listeners.remove(modelListener);
         //关闭电源模式
         wl.release();
 

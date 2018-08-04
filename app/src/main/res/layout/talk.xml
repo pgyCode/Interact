@@ -4,7 +4,7 @@
     android:focusable="true"
     android:fitsSystemWindows="true"
     android:focusableInTouchMode="true"
-    android:background="@drawable/gardient_header"
+    android:background="@color/T_main"
     android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -47,7 +47,7 @@
         <ListView
             android:layout_width="match_parent"
             android:id="@+id/lst"
-            android:transcriptMode="alwaysScroll"
+            android:transcriptMode="normal"
             android:background="@color/T_color_talk_hui"
             android:divider="@null"
             android:layout_above="@+id/footer"
@@ -78,24 +78,20 @@
                     android:paddingTop="5dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginRight="7dp"
                     android:maxLines="5"
                     android:paddingBottom="5dp"
-                    android:layout_marginTop="5dp"
                     android:paddingLeft="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/edt_msg_bg"
-                    android:layout_alignParentBottom="true"
+                    android:background="@color/white"
                     android:minHeight="35dp" />
 
                 <Button
                     android:id="@+id/btn_send"
                     android:layout_width="60dp"
                     android:layout_height="35dp"
-                    android:layout_gravity="bottom"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginRight="3dp"
-                    android:background="@drawable/juhong_radius_bg"
-                    android:layout_marginBottom="3dp"
+                    android:background="@color/T_main"
                     android:text="发 送"
                     android:textColor="@color/white"
                     android:textSize="16sp" />

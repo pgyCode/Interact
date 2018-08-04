@@ -22,6 +22,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class AccountModel extends Model {
 
     public UserBean currentUser;
+    public boolean onLine = false;
 
     private static AccountModel instance;
     private static final Object mLock = new Object();

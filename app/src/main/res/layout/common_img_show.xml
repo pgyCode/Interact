@@ -20,6 +20,6 @@
         android:layout_marginRight="20dp"
         android:layout_marginBottom="20dp"
         android:id="@+id/btn_save"
-        android:background="@drawable/white_border_black_bg"
+        android:background="@color/T_main"
         android:textColor="@color/white"/>
 </RelativeLayout>

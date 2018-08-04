@@ -20,7 +20,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.rtyui.mvptalk.R;
 import com.example.rtyui.mvptalk.model.MsgModel;
-import com.example.rtyui.mvptalk.model.TeamMsgModel;
 import com.example.rtyui.mvptalk.tool.AbstractNetTaskCode;
 import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.MyImgShow;
@@ -54,7 +53,7 @@ public class ImgShowActivity extends Activity {
 
                 for (int i = 0; i < MsgModel.getInstance().getImgCount(id); i++){
                     View view = LayoutInflater.from(ImgShowActivity.this).inflate(R.layout.common_img_show_item, null, false);
-                    MyImgShow.showCompleteImgSquare(ImgShowActivity.this, MsgModel.getInstance().getCombeanById(id).chats.get(MsgModel.getInstance().getMsgPosition(id, i)).msg.replace(App.MSG_IMG, ""), ((ImageView)view.findViewById(R.id.img)));
+                    MyImgShow.showCompleteImgSquare(ImgShowActivity.this, MsgModel.getInstance().INNER_getCombeanById(id).chats.get(MsgModel.getInstance().getMsgPosition(id, i)).msg.replace(App.MSG_IMG, ""), ((ImageView)view.findViewById(R.id.img)));
                     views.add(view);
                 }
 
@@ -78,11 +77,11 @@ public class ImgShowActivity extends Activity {
             case App.PHOTO_SHOW_SIGN_TEAM_SENDIMG:
                 viewPager.setAdapter(new MyTeamAdapter());
 
-                viewPager.setCurrentItem(TeamMsgModel.getInstance().getImgPosition(getIntent().getIntExtra("position", -1), id));
+                viewPager.setCurrentItem(MsgModel.getInstance().getImgPosition(getIntent().getIntExtra("position", -1), id));
 
-                for (int i = 0; i < TeamMsgModel.getInstance().getImgCount(id); i++){
+                for (int i = 0; i < MsgModel.getInstance().getImgCount(id); i++){
                     View view = LayoutInflater.from(ImgShowActivity.this).inflate(R.layout.common_img_show_item, null, false);
-                    MyImgShow.showCompleteImgSquare(ImgShowActivity.this, TeamMsgModel.getInstance().getCombeanById(id).chats.get(TeamMsgModel.getInstance().getMsgPosition(id, i)).msg.replace(App.MSG_IMG, ""), ((ImageView)view.findViewById(R.id.img)));
+                    MyImgShow.showCompleteImgSquare(ImgShowActivity.this, MsgModel.getInstance().INNER_getCombeanById(id).chats.get(MsgModel.getInstance().getMsgPosition(id, i)).msg.replace(App.MSG_IMG, ""), ((ImageView)view.findViewById(R.id.img)));
                     views.add(view);
                 }
 
@@ -139,7 +138,7 @@ public class ImgShowActivity extends Activity {
 
         @Override
         public int getCount() {
-            return TeamMsgModel.getInstance().getImgCount(id);
+            return MsgModel.getInstance().getImgCount(id);
         }
 
         @Override
@@ -169,7 +168,7 @@ public class ImgShowActivity extends Activity {
 
         @Override
         protected int middle() {
-            return NetVisitor.downloadImg(MsgModel.getInstance().getCombeanById(id).chats.get(MsgModel.getInstance().getMsgPosition(id, viewPager.getCurrentItem())).msg.replace(App.MSG_IMG, ""), System.currentTimeMillis() + "");
+            return NetVisitor.downloadImg(MsgModel.getInstance().INNER_getCombeanById(id).chats.get(MsgModel.getInstance().getMsgPosition(id, viewPager.getCurrentItem())).msg.replace(App.MSG_IMG, ""), System.currentTimeMillis() + "");
         }
 
         @Override
@@ -191,7 +190,7 @@ public class ImgShowActivity extends Activity {
 
         @Override
         protected int middle() {
-            return NetVisitor.downloadImg(TeamMsgModel.getInstance().getCombeanById(id).chats.get(TeamMsgModel.getInstance().getMsgPosition(id, viewPager.getCurrentItem())).msg.replace(App.MSG_IMG, ""), System.currentTimeMillis() + "");
+            return NetVisitor.downloadImg(MsgModel.getInstance().INNER_getCombeanById(id).chats.get(MsgModel.getInstance().getMsgPosition(id, viewPager.getCurrentItem())).msg.replace(App.MSG_IMG, ""), System.currentTimeMillis() + "");
         }
 
         @Override

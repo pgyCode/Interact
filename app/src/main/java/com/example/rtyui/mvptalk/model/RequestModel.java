@@ -88,8 +88,8 @@ public class RequestModel extends Model {
                     addFriendBeans.get(position).recvId);
             Msg msg = new Gson().fromJson(temp, Msg.class);
             FriendModel.getInstance().linkFriends.add(new FriendBean(addFriendBeans.get(position).sendId, addFriendBeans.get(position).sendNickname, addFriendBeans.get(position).sendHeadImgUrl, addFriendBeans.get(position).sendNickname));
-            //addFriendBeans.remove(position);
-            MyLocalObject.saveObject("linkFriends", FriendModel.getInstance().linkFriends);
+            addFriendBeans.remove(position);
+            MyLocalObject.saveObject("linkFriends_" + AccountModel.getInstance().currentUser.id, FriendModel.getInstance().linkFriends);
             return msg.code;
         }
         catch(Exception e){}
@@ -113,5 +113,13 @@ public class RequestModel extends Model {
         }
         catch(Exception e){}
         return -1;
+    }
+
+
+    public boolean isWarn(){
+        if (addFriendBeans != null && addFriendBeans.size() > 0)
+            return true;
+        else
+            return false;
     }
 }

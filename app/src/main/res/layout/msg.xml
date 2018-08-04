@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/T_color_diban_hui"
+    android:background="@color/white"
+    android:id="@+id/root"
     android:orientation="vertical">
-    <com.example.rtyui.androidteach.PullRefreshList.PullRefreshListView
+    <ListView
         android:layout_width="match_parent"
         android:layout_below="@id/title"
         android:id="@+id/lst"
-        android:divider="@null"
         android:layout_height="match_parent">
+    </ListView>
+    <!--</com.example.rtyui.androidteach.PullRefreshList.PullRefreshListView>-->
 
-    </com.example.rtyui.androidteach.PullRefreshList.PullRefreshListView>
-
-</RelativeLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

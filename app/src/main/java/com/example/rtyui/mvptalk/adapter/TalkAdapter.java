@@ -49,9 +49,9 @@ public class TalkAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if (MsgModel.getInstance().getCombeanById(id) == null)
+        if (MsgModel.getInstance().getFriendCombeanById(id) == null)
             return 0;
-        return MsgModel.getInstance().getCombeanById(id).chats.size();
+        return MsgModel.getInstance().getFriendCombeanById(id).chats.size();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class TalkAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
 
         //ViewHolder viewHolder = null;
-        final ChatBean bean = MsgModel.getInstance().getCombeanById(id).chats.get(position);
+        final ChatBean bean = MsgModel.getInstance().getFriendCombeanById(id).chats.get(position);
         //自己发出的消息
         if (bean.sendId == AccountModel.getInstance().currentUser.id){
             if (bean.msg.startsWith(App.MSG_CHAT)){
@@ -78,7 +78,7 @@ public class TalkAdapter extends BaseAdapter {
                 ImageView imgStatu = convertView.findViewById(R.id.img_statu);
                 TextView txtTime = convertView.findViewById(R.id.txt_time);
                 txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(bean.time));
-                if (position == 0 || bean.time - MsgModel.getInstance().getCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
+                if (position == 0 || bean.time - MsgModel.getInstance().getFriendCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
                     txtTime.setVisibility(View.VISIBLE);
                 }else{
                     txtTime.setVisibility(View.GONE);
@@ -107,7 +107,7 @@ public class TalkAdapter extends BaseAdapter {
                 ImageView imgStatu = convertView.findViewById(R.id.img_statu);
                 TextView txtTime = convertView.findViewById(R.id.txt_time);
                 txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(bean.time));
-                if (position == 0 || bean.time - MsgModel.getInstance().getCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
+                if (position == 0 || bean.time - MsgModel.getInstance().getFriendCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
                     txtTime.setVisibility(View.VISIBLE);
                 }else{
                     txtTime.setVisibility(View.GONE);
@@ -153,7 +153,7 @@ public class TalkAdapter extends BaseAdapter {
                 txtMsg.setText(bean.msg.replace(App.MSG_CHAT, ""));
                 TextView txtTime = convertView.findViewById(R.id.txt_time);
                 txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(bean.time));
-                if (position == 0 || bean.time - MsgModel.getInstance().getCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
+                if (position == 0 || bean.time - MsgModel.getInstance().getFriendCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
                     txtTime.setVisibility(View.VISIBLE);
                 }else{
                     txtTime.setVisibility(View.GONE);
@@ -177,7 +177,7 @@ public class TalkAdapter extends BaseAdapter {
                 });
                 TextView txtTime = convertView.findViewById(R.id.txt_time);
                 txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(bean.time));
-                if (position == 0 || bean.time - MsgModel.getInstance().getCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
+                if (position == 0 || bean.time - MsgModel.getInstance().getFriendCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
                     txtTime.setVisibility(View.VISIBLE);
                 }else{
                     txtTime.setVisibility(View.GONE);

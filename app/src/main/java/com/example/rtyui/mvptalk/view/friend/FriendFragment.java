@@ -6,19 +6,21 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Trace;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.rtyui.androidteach.PullRefreshList.PullRefreshInterface;
-import com.example.rtyui.androidteach.PullRefreshList.PullRefreshListView;
 import com.example.rtyui.mvptalk.R;
-import com.example.rtyui.mvptalk.adapter.LinkFriendAdapter;
+import com.example.rtyui.mvptalk.adapter.FriendAdapter;
 import com.example.rtyui.mvptalk.model.FriendModel;
 import com.example.rtyui.mvptalk.model.RequestModel;
 import com.example.rtyui.mvptalk.parent.OnModelChangeListener;
@@ -33,17 +35,15 @@ import java.lang.ref.WeakReference;
  * Created by rtyui on 2018/3/31.
  */
 
-public class FriendFragment extends Fragment implements View.OnClickListener {
+public class FriendFragment extends Fragment{
 
     private View root = null;
 
-    private LinkFriendAdapter linkFriendAdapter = null;
+    private FriendAdapter friendAdapter = null;
 
-    private RecvBroadcastReceiver broadcastReceiver = null;
+    private SwipeRefreshLayout refresher = null;
 
-    private PullRefreshListView pullRefreshListView = null;
-
-    private View header = null;
+    private ListView listView = null;
 
     private OnModelChangeListener modelListener;
 
@@ -51,102 +51,77 @@ public class FriendFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.friend, null);
-        linkFriendAdapter = new LinkFriendAdapter(FriendFragment.this.getContext());
+        friendAdapter = new FriendAdapter(FriendFragment.this.getContext());
 
-        pullRefreshListView = root.findViewById(R.id.listview);
+        listView = root.findViewById(R.id.listview);
 
-        header = inflater.inflate(R.layout.friend_header, pullRefreshListView, false);
-        header.findViewById(R.id.btn_add_new_friend).setOnClickListener(this);
-        pullRefreshListView.addHeaderView(header, null, false);
+        refresher = root.findViewById(R.id.refresher);
 
-        pullRefreshListView.setAdapter(linkFriendAdapter);
+        listView.setAdapter(friendAdapter);
 
         modelListener = new OnModelChangeListener() {
             @Override
             public void onChange() {
-                linkFriendAdapter.notifyDataSetChanged();
+                friendAdapter.notifyDataSetChanged();
             }
         };
         FriendModel.getInstance().listeners.add(modelListener);
 
-        pullRefreshListView.setPullRefreshInterface(new PullRefreshInterface() {
+        refresher.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void beforeLoad_PullRefresh() {
+            public void onRefresh() {
+                new NetTaskCode(new NetTaskCodeListener() {
+                    @Override
+                    public void before() {
 
-            }
+                    }
 
-            @Override
-            public boolean load_PullRefresh() {
-                int a = FriendModel.getInstance().flush();
-                int b = RequestModel.getInstance().loadRequest();
-                return a == App.NET_SUCCEED && b == App.NET_SUCCEED;
-            }
+                    @Override
+                    public int middle() {
+                        int a = FriendModel.getInstance().flush();
+                        int b = RequestModel.getInstance().loadRequest();
+                        return a;
+                    }
 
-            @Override
-            public void afterLoad_PullRefresh(boolean result) {
-                FriendModel.getInstance().actListeners();
-                RequestModel.getInstance().actListeners();
+                    @Override
+                    public void after(int code) {
+                        refresher.setRefreshing(false);
+                        if (code == App.NET_SUCCEED) {
+                            Toast.makeText(FriendFragment.this.getContext(), "刷新成功", Toast.LENGTH_SHORT).show();
+                            FriendModel.getInstance().actListeners();
+                            RequestModel.getInstance().actListeners();
+                        }else{
+                            Toast.makeText(FriendFragment.this.getContext(), "刷新失败", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).execute();
             }
         });
 
-        pullRefreshListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(FriendFragment.this.getContext(), TalkActivity.class);
-                intent.putExtra("userId", FriendModel.getInstance().linkFriends.get(position - pullRefreshListView.getHeaderViewsCount()).id);
-                intent.putExtra("nickname", FriendModel.getInstance().linkFriends.get(position - pullRefreshListView.getHeaderViewsCount()).nickname);
-                intent.putExtra("headImgUrl", FriendModel.getInstance().linkFriends.get(position - pullRefreshListView.getHeaderViewsCount()).headImgUrl);
+                intent.putExtra("userId", FriendModel.getInstance().linkFriends.get(position - listView.getHeaderViewsCount()).id);
+                intent.putExtra("nickname", FriendModel.getInstance().linkFriends.get(position - listView.getHeaderViewsCount()).nickname);
+                intent.putExtra("headImgUrl", FriendModel.getInstance().linkFriends.get(position - listView.getHeaderViewsCount()).headImgUrl);
                 startActivity(intent);
+            }
+        });
+
+
+        root.findViewById(R.id.btn_more).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(FriendFragment.this.getActivity(), AddFriendActivity.class));
             }
         });
         return root;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        broadcastReceiver = new RecvBroadcastReceiver();
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this.getContext());
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(App.LINK_FRIEND_RESPONSE_RECV_OK);
-        localBroadcastManager.registerReceiver(broadcastReceiver, intentFilter);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this.getContext());
-        localBroadcastManager.unregisterReceiver(broadcastReceiver);
-    }
-    public void goAddFriend() {
-        startActivity(new Intent(this.getContext(), AddFriendActivity.class));
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btn_add_new_friend:
-                goAddFriend();
-                break;
-        }
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         FriendModel.getInstance().listeners.remove(modelListener);
-    }
-
-    private class RecvBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
-                case App.LINK_FRIEND_RESPONSE_RECV_OK:
-                    linkFriendAdapter.notifyDataSetChanged();
-                    break;
-            }
-        }
     }
 }

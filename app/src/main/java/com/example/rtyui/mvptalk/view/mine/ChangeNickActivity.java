@@ -2,6 +2,7 @@ package com.example.rtyui.mvptalk.view.mine;
 
 import android.accounts.Account;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -15,12 +16,12 @@ import com.example.rtyui.mvptalk.model.FriendModel;
 import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.NetTaskCode;
 import com.example.rtyui.mvptalk.tool.NetTaskCodeListener;
+import com.example.rtyui.mvptalk.view.main.MainActivity;
 
 public class ChangeNickActivity extends Activity {
 
 
     private EditText edt_nick;
-    private ViewStub loading;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,7 +29,6 @@ public class ChangeNickActivity extends Activity {
         setContentView(R.layout.mine_change_nick);
 
         edt_nick = findViewById(R.id.edt_nick);
-        loading = findViewById(R.id.loading);
 
         findViewById(R.id.btn_sure).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,7 +36,7 @@ public class ChangeNickActivity extends Activity {
                 new NetTaskCode(new NetTaskCodeListener() {
                     @Override
                     public void before() {
-                        loading.setVisibility(View.VISIBLE);
+                        startActivity(new Intent(ChangeNickActivity.this, MainActivity.class));
                     }
 
                     @Override
@@ -46,11 +46,9 @@ public class ChangeNickActivity extends Activity {
 
                     @Override
                     public void after(int code) {
-                        loading.setVisibility(View.GONE);
                         if (code == App.NET_SUCCEED){
                             Toast.makeText(ChangeNickActivity.this, "修改成功", Toast.LENGTH_SHORT).show();
                             AccountModel.getInstance().actListeners();
-                            finish();
                         }
                         else
                             Toast.makeText(ChangeNickActivity.this, "修改失败", Toast.LENGTH_SHORT).show();

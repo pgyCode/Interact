@@ -3,26 +3,25 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:background="@color/white"
-    android:layout_height="60dp">
+    android:layout_height="70dp">
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="60dp">
         <ImageView
             android:layout_width="70dp"
-            android:padding="7dp"
+            android:padding="13dp"
             android:src="@mipmap/ic_launcher_round"
-            android:layout_height="60dp"
+            android:layout_height="70dp"
             android:id="@+id/img_head"/>
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="70dp"
             android:text="昵称"
             android:textSize="15sp"
             android:paddingLeft="10dp"
             android:textColor="@color/black"
             android:gravity="center_vertical"
-            android:paddingBottom="3dp"
             android:id="@+id/txt_username"
             android:layout_toRightOf="@id/img_head"/>
     </RelativeLayout>

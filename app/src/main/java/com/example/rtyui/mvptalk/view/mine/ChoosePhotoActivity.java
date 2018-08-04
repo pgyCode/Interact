@@ -134,20 +134,17 @@ public class ChoosePhotoActivity extends Activity {
             if (convertView == null){
                 convertView = LayoutInflater.from(ChoosePhotoActivity.this).inflate(R.layout.own_photo_item, grid, false);
                 viewHolder = new ViewHolder();
-                //viewHolder.path = convertView.findViewById(R.id.path);
                 viewHolder.img = convertView.findViewById(R.id.img);
                 convertView.setTag(viewHolder);
             }
             else
                 viewHolder = (ViewHolder) convertView.getTag();
 
-            //viewHolder.path.setText(photos.get(position).replace(Environment.getExternalStorageDirectory().getPath() + "/", ""));
             MyImgShow.showLocalImgSquare(ChoosePhotoActivity.this, "file://" + photos.get(position), viewHolder.img);
             return convertView;
         }
 
         public class ViewHolder {
-            //TextView path;
             ImageView img;
         }
     }

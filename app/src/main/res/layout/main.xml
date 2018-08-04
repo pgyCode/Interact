@@ -10,220 +10,208 @@
         android:layout_height="match_parent">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:background="@drawable/gardient_header"
             android:fitsSystemWindows="true"
-            android:clipToPadding="true"
+            android:background="@color/T_main"
             android:layout_height="73dp">
-            <ImageView
-                android:layout_width="57dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:paddingLeft="7dp"
-                android:paddingTop="7dp"
-                android:paddingBottom="7dp"
-                android:id="@+id/img_head"
-                android:visibility="invisible"
                 android:layout_alignParentBottom="true"
-                android:src="@mipmap/ic_launcher_round"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:text="消息"
-                android:textColor="@color/white"
-                android:textSize="17sp"
-                android:id="@+id/txt_title"
-                android:gravity="center"
-                android:layout_alignParentBottom="true"
-                android:layout_centerInParent="true"
-                android:layout_height="50dp" />
-            <LinearLayout
-                android:layout_width="70dp"
-                android:id="@+id/btn_new_friend"
-                android:layout_alignParentRight="true"
-                android:orientation="horizontal"
-                android:layout_alignParentBottom="true"
-                android:layout_height="50dp">
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="50dp"
-                    android:paddingLeft="23dp"
-                    android:paddingTop="12dp"
-                    android:paddingRight="3dp"
-                    android:paddingBottom="12dp"
-                    android:src="@drawable/friend_new_friend"/>
+                android:orientation="horizontal">
                 <TextView
-                    android:layout_width="30dp"
-                    android:layout_height="50dp"
-                    android:paddingLeft="3dp"
-                    android:gravity="left|center_vertical"
-                    android:textSize="15sp"
-                    android:text="0"
-                    android:id="@+id/txt_request"
-                    android:textColor="@color/white"/>
+                    android:layout_width="wrap_content"
+                    android:text="联系人"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:id="@+id/txt_title"
+                    android:layout_marginLeft="25dp"
+                    android:gravity="center_vertical"
+                    android:layout_alignParentBottom="true"
+                    android:layout_height="50dp" />
+                <View
+                    android:layout_width="0px"
+                    android:layout_weight="1"
+                    android:layout_height="0px"/>
+                <View
+                    android:layout_width="20dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:id="@+id/sign_offline"
+                    android:layout_height="20dp"
+                    android:background="@drawable/red_oval"/>
+                <View
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:visibility="gone"
+                    android:background="@drawable/grew_oval"/>
+                <View
+                    android:layout_width="20dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:id="@+id/sign_online"
+                    android:layout_height="20dp"
+                    android:background="@drawable/grew_oval"/>
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="70dp"
-                android:id="@+id/btn_team_request"
-                android:layout_alignParentRight="true"
-                android:orientation="horizontal"
-                android:layout_alignParentBottom="true"
-                android:layout_height="50dp">
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="50dp"
-                    android:paddingLeft="23dp"
-                    android:paddingTop="12dp"
-                    android:paddingRight="3dp"
-                    android:paddingBottom="12dp"
-                    android:src="@drawable/friend_new_friend"/>
-                <TextView
-                    android:layout_width="30dp"
-                    android:layout_height="50dp"
-                    android:paddingLeft="3dp"
-                    android:gravity="left|center_vertical"
-                    android:textSize="15sp"
-                    android:text="0"
-                    android:id="@+id/txt_team_request"
-                    android:textColor="@color/white"/>
-            </LinearLayout>
         </RelativeLayout>
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:id="@+id/all"
-            android:layout_weight="1">
-
-        </FrameLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2px"
-            android:background="@color/mygrew"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:background="@color/white"
-            android:layout_height="50dp">
+            android:layout_height="40dp">
             <RelativeLayout
                 android:layout_width="0px"
                 android:id="@+id/btn_msg"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:layout_height="match_parent">
-                <RelativeLayout
-                    android:layout_width="40dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_height="30dp"
-                    android:id="@+id/msg_continer">
-                    <ImageView
-                        android:layout_centerHorizontal="true"
-                        android:layout_width="match_parent"
-                        android:scaleType="fitCenter"
-                        android:id="@+id/img_chat"
-                        android:layout_height="30dp"
-                        android:src="@drawable/main_msg_in"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/block_msg"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:layout_height="38dp">
                     <TextView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:background="@drawable/red_oval_bg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
                         android:gravity="center"
-                        android:text="12"
-                        android:id="@+id/txt_unread"
-                        android:layout_marginTop="3dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:textColor="@color/T_main"
+                        android:textSize="16sp"
+                        android:id="@+id/txt_msg"
+                        android:text="消息"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="18dp"
+                        android:paddingLeft="3dp"
+                        android:paddingRight="3dp"
+                        android:text="New"
+                        android:layout_marginLeft="3dp"
+                        android:id="@+id/txt_warn"
+                        android:textSize="13sp"
+                        android:gravity="center"
                         android:textColor="@color/white"
-                        android:textSize="10sp" />
-                </RelativeLayout>
+                        android:background="@color/red"/>
+                </LinearLayout>
 
-                <TextView
+                <View
                     android:layout_width="match_parent"
-                    android:gravity="center"
-                    android:textSize="11sp"
-                    android:layout_below="@id/msg_continer"
-                    android:textStyle="bold"
-                    android:id="@+id/txt_chat"
-                    android:visibility="gone"
-                    android:text="消息"
-                    android:layout_height="20dp"/>
+                    android:layout_height="2dp"
+                    android:layout_alignRight="@id/block_msg"
+                    android:layout_alignLeft="@id/block_msg"
+                    android:background="@color/T_main"
+                    android:id="@+id/label_msg"
+                    android:layout_below="@id/block_msg"/>
             </RelativeLayout>
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="0px"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
                 android:id="@+id/btn_friend"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:layout_height="match_parent">
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:scaleType="fitCenter"
-                    android:layout_height="30dp"
-                    android:id="@+id/img_friend"
-                    android:src="@drawable/main_friend_out"/>
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
                     android:gravity="center"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:id="@+id/txt_link"
-                    android:text="联系人"
-                    android:visibility="gone"
-                    android:layout_height="20dp"/>
-            </LinearLayout>
-
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/T_main"
+                    android:textSize="16sp"
+                    android:id="@+id/txt_friend"
+                    android:text="联系人"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_alignRight="@id/txt_friend"
+                    android:layout_alignLeft="@id/txt_friend"
+                    android:background="@color/T_main"
+                    android:id="@+id/label_friend"
+                    android:layout_below="@id/txt_friend"/>
+            </RelativeLayout>
             <RelativeLayout
                 android:layout_width="0px"
                 android:id="@+id/btn_team"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:layout_height="match_parent">
-                <RelativeLayout
-                    android:layout_width="40dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_height="30dp"
-                    android:id="@+id/team_continer">
-                    <ImageView
-                        android:layout_centerHorizontal="true"
-                        android:layout_width="match_parent"
-                        android:scaleType="fitCenter"
-                        android:id="@+id/img_team"
-                        android:layout_height="30dp"
-                        android:src="@mipmap/ic_launcher"/>
-                </RelativeLayout>
-
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
                     android:gravity="center"
-                    android:textSize="11sp"
-                    android:layout_below="@id/team_continer"
-                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/T_main"
+                    android:textSize="16sp"
                     android:id="@+id/txt_team"
-                    android:visibility="gone"
-                    android:text="消息"
-                    android:layout_height="20dp"/>
+                    android:text="团队"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_alignRight="@id/txt_team"
+                    android:layout_alignLeft="@id/txt_team"
+                    android:background="@color/T_main"
+                    android:id="@+id/label_team"
+                    android:layout_below="@id/txt_team"/>
             </RelativeLayout>
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="0px"
+                android:id="@+id/btn_more"
                 android:layout_weight="1"
-                android:id="@+id/btn_own"
-                android:orientation="vertical"
                 android:gravity="center"
                 android:layout_height="match_parent">
-                <ImageView
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/block_more"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:layout_height="38dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:gravity="center"
+                        android:layout_centerHorizontal="true"
+                        android:textColor="@color/T_main"
+                        android:textSize="16sp"
+                        android:id="@+id/txt_more"
+                        android:text="更多"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="18dp"
+                        android:paddingLeft="3dp"
+                        android:paddingRight="3dp"
+                        android:text="New"
+                        android:layout_marginLeft="3dp"
+                        android:id="@+id/txt_warn_more"
+                        android:textSize="13sp"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:background="@color/red"/>
+                </LinearLayout>
+                <View
                     android:layout_width="match_parent"
-                    android:scaleType="fitCenter"
-                    android:id="@+id/img_leaf"
-                    android:layout_height="30dp"
-                    android:src="@drawable/main_leaf_out"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:gravity="center"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:id="@+id/txt_leaf"
-                    android:text="生活"
-                    android:visibility="gone"
-                    android:layout_height="20dp"/>
-            </LinearLayout>
+                    android:layout_height="2dp"
+                    android:layout_alignRight="@id/block_more"
+                    android:layout_alignLeft="@id/block_more"
+                    android:background="@color/T_main"
+                    android:id="@+id/label_more"
+                    android:layout_below="@id/block_more"/>
+            </RelativeLayout>
         </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/mygrew"/>
+        <android.support.v4.view.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/viewpager">
 
+        </android.support.v4.view.ViewPager>
     </LinearLayout>
 </RelativeLayout>

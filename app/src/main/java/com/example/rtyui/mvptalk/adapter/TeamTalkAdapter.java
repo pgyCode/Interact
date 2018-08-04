@@ -13,11 +13,8 @@ import android.widget.TextView;
 import com.example.rtyui.mvptalk.R;
 import com.example.rtyui.mvptalk.bean.ChatBean;
 import com.example.rtyui.mvptalk.model.AccountModel;
-import com.example.rtyui.mvptalk.model.FriendModel;
 import com.example.rtyui.mvptalk.model.MsgModel;
-import com.example.rtyui.mvptalk.model.TeamModel;
-import com.example.rtyui.mvptalk.model.TeamMsgModel;
-import com.example.rtyui.mvptalk.newBean.TeamChatBean;
+import com.example.rtyui.mvptalk.model.TempUserModel;
 import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.MyImgShow;
 import com.example.rtyui.mvptalk.view.common.ImgShowActivity;
@@ -45,9 +42,9 @@ public class TeamTalkAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if (TeamMsgModel.getInstance().getCombeanById(id) == null)
+        if (MsgModel.getInstance().getTeamCombeanById(id) == null)
             return 0;
-        return TeamMsgModel.getInstance().getCombeanById(id).chats.size();
+        return MsgModel.getInstance().getTeamCombeanById(id).chats.size();
     }
 
     @Override
@@ -64,7 +61,7 @@ public class TeamTalkAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
 
         //ViewHolder viewHolder = null;
-        final TeamChatBean bean = TeamMsgModel.getInstance().getCombeanById(id).chats.get(position);
+        final ChatBean bean = MsgModel.getInstance().getTeamCombeanById(id).chats.get(position);
         //自己发出的消息
         if (bean.sendId == AccountModel.getInstance().currentUser.id){
             if (bean.msg.startsWith(App.MSG_CHAT)){
@@ -75,7 +72,7 @@ public class TeamTalkAdapter extends BaseAdapter {
                 TextView txtTime = convertView.findViewById(R.id.txt_time);
                 TextView txtNick = convertView.findViewById(R.id.txt_nick);
                 txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(bean.time));
-                if (position == 0 || bean.time - TeamMsgModel.getInstance().getCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
+                if (position == 0 || bean.time - MsgModel.getInstance().getTeamCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
                     txtTime.setVisibility(View.VISIBLE);
                 }else{
                     txtTime.setVisibility(View.GONE);
@@ -106,7 +103,7 @@ public class TeamTalkAdapter extends BaseAdapter {
                 TextView txtTime = convertView.findViewById(R.id.txt_time);
                 TextView txtNick = convertView.findViewById(R.id.txt_nick);
                 txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(bean.time));
-                if (position == 0 || bean.time - TeamMsgModel.getInstance().getCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
+                if (position == 0 || bean.time - MsgModel.getInstance().getTeamCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
                     txtTime.setVisibility(View.VISIBLE);
                 }else{
                     txtTime.setVisibility(View.GONE);
@@ -154,13 +151,13 @@ public class TeamTalkAdapter extends BaseAdapter {
                 TextView txtTime = convertView.findViewById(R.id.txt_time);
                 txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(bean.time));
                 TextView txtNick = convertView.findViewById(R.id.txt_nick);
-                if (position == 0 || bean.time - TeamMsgModel.getInstance().getCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
+                if (position == 0 || bean.time - MsgModel.getInstance().getTeamCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
                     txtTime.setVisibility(View.VISIBLE);
                 }else{
                     txtTime.setVisibility(View.GONE);
                 }
-                txtNick.setText(TeamModel.getInstance().OUTER_getMemberById(id, bean.sendId).nickname);
-                MyImgShow.showNetImgCircle(context, TeamModel.getInstance().OUTER_getMemberById(id, bean.sendId).headImgUrl, imgHead);
+                txtNick.setText(TempUserModel.getInstance().getBeanById(bean.sendId).nickname);
+                MyImgShow.showNetImgCircle(context, TempUserModel.getInstance().getBeanById(bean.sendId).headImgUrl, imgHead);
             }
             else if(bean.msg.startsWith(App.MSG_IMG)){
                 convertView = LayoutInflater.from(context).inflate(R.layout.team_talk_other_img, null, false);
@@ -180,13 +177,13 @@ public class TeamTalkAdapter extends BaseAdapter {
                 TextView txtTime = convertView.findViewById(R.id.txt_time);
                 txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(bean.time));
                 TextView txtNick = convertView.findViewById(R.id.txt_nick);
-                if (position == 0 || bean.time - TeamMsgModel.getInstance().getCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
+                if (position == 0 || bean.time - MsgModel.getInstance().getTeamCombeanById(id).chats.get(position - 1).time > App.TALK_TIME_SPACE){
                     txtTime.setVisibility(View.VISIBLE);
                 }else{
                     txtTime.setVisibility(View.GONE);
                 }
-                txtNick.setText(TeamModel.getInstance().OUTER_getMemberById(id, bean.sendId).nickname);
-                MyImgShow.showNetImgCircle(context, TeamModel.getInstance().OUTER_getMemberById(id, bean.sendId).headImgUrl, imgHead);
+                txtNick.setText(TempUserModel.getInstance().getBeanById(bean.sendId).nickname);
+                MyImgShow.showNetImgCircle(context, TempUserModel.getInstance().getBeanById(bean.sendId).headImgUrl, imgHead);
             }else{
 
             }

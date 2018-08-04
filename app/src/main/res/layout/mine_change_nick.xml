@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:id="@+id/header"
         android:fitsSystemWindows="true"
-        android:background="@drawable/gardient_header"
+        android:background="@color/T_main"
         android:layout_height="73dp">
         <TextView
             android:layout_width="match_parent"
@@ -45,16 +45,13 @@
         android:layout_height="50dp"
         android:layout_below="@id/header"
         android:layout_marginLeft="20dp"
+        android:paddingTop="10dp"
         android:layout_marginRight="20dp"
-        android:textSize="17sp"
+        android:textSize="16sp"
         android:textColor="@color/black"
         android:lines="1"
-        android:background="@drawable/bottom_cheng_bg"
+        android:maxLength="25"
+        android:background="@drawable/bottom_main_bg"
         android:id="@+id/edt_nick"/>
-    <ViewStub
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/loading"
-        android:layout="@layout/loading"/>
 </RelativeLayout>
 

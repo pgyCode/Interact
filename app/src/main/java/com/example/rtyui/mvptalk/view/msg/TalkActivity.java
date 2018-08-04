@@ -32,12 +32,15 @@ import com.avos.avoscloud.SaveCallback;
 import com.example.rtyui.mvptalk.R;
 import com.example.rtyui.mvptalk.adapter.MsgAdapter;
 import com.example.rtyui.mvptalk.adapter.TalkAdapter;
+import com.example.rtyui.mvptalk.back.Msger;
 import com.example.rtyui.mvptalk.bean.ChatBean;
 import com.example.rtyui.mvptalk.model.AccountModel;
 import com.example.rtyui.mvptalk.model.FriendModel;
 import com.example.rtyui.mvptalk.model.MsgModel;
 import com.example.rtyui.mvptalk.parent.OnModelChangeListener;
 import com.example.rtyui.mvptalk.tool.App;
+import com.example.rtyui.mvptalk.tool.permission.OnAskAppearListener;
+import com.example.rtyui.mvptalk.tool.permission.PermissionAsker;
 import com.example.rtyui.mvptalk.view.common.FileChooseActivity;
 import com.example.rtyui.mvptalk.view.main.MainActivity;
 import com.example.rtyui.mvptalk.view.mine.ChooseAlbumActivity;
@@ -63,6 +66,8 @@ public class TalkActivity extends Activity{
 
     private OnModelChangeListener modelListener = null;
 
+    private PermissionAsker albumAsker;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,18 +92,7 @@ public class TalkActivity extends Activity{
 
         MsgModel.getInstance().listeners.add(modelListener);
         FriendModel.getInstance().listeners.add(modelListener);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         FriendModel.getInstance().CURRENT_TALK = userId;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        FriendModel.getInstance().CURRENT_TALK = -1;
     }
 
     private void initLayout(){
@@ -109,16 +103,26 @@ public class TalkActivity extends Activity{
         txtToName = findViewById(R.id.txt_toname);
         txtToName.setText(FriendModel.getInstance().getUserById(userId).remark);
 
+        albumAsker = new PermissionAsker(this, new OnAskAppearListener() {
+            @Override
+            public void onAppear() {
+                Intent intent = new Intent(TalkActivity.this, ChooseAlbumActivity.class);
+                intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_SENDIMG);
+                startActivity(intent);
+            }
+        }, Manifest.permission.READ_EXTERNAL_STORAGE, 2, 2, "为了发送图片，请允许我们使用读取文件权限", true);
+
         findViewById(R.id.btn_send).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
             if (edtMsg.getText().toString().trim().equals("")){
             }else {
-                ChatBean chatBean = new ChatBean(userId, AccountModel.getInstance().currentUser.id, App.MSG_CHAT + edtMsg.getText().toString(), AccountModel.getInstance().currentUser.nickname, AccountModel.getInstance().currentUser.headImgUrl, FriendModel.getInstance().getUserById(userId).nickname, FriendModel.getInstance().getUserById(userId).headImgUrl, System.currentTimeMillis());
+                long time = System.currentTimeMillis();
+                ChatBean chatBean = new ChatBean(userId, AccountModel.getInstance().currentUser.id, App.MSG_CHAT + edtMsg.getText().toString(), time, App.CATEGORY_FRIEND);
                 MsgModel.getInstance().add(chatBean);
                 edtMsg.setText("");
                 MsgModel.getInstance().actListeners();
-                doSend(chatBean);
+                App.sendBroadCast(App.SEND_ACTION, new Msger(time, App.C2S_FRIEND_CHAT, new Gson().toJson(chatBean)).toString());
             }
             }
         });
@@ -142,48 +146,11 @@ public class TalkActivity extends Activity{
         findViewById(R.id.btn_img).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (ActivityCompat.checkSelfPermission(TalkActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        TalkActivity.this.requestPermissions(
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
-                    }else {
-                        Toast.makeText(TalkActivity.this, "权限已申请", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(TalkActivity.this, ChooseAlbumActivity.class);
-                        intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_SENDIMG);
-                        startActivity(intent);
-                    }
-                }
-                else{
-                    Intent intent = new Intent(TalkActivity.this, ChooseAlbumActivity.class);
-                    intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_SENDIMG);
-                    startActivity(intent);
-                }
+                albumAsker.onAsk();
             }
         });
 
-        findViewById(R.id.btn_file).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (ActivityCompat.checkSelfPermission(TalkActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        TalkActivity.this.requestPermissions(
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
-                    }else {
-                        Toast.makeText(TalkActivity.this, "权限已申请", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(TalkActivity.this, FileChooseActivity.class);
-                        intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_SENDIMG);
-                        startActivity(intent);
-                    }
-                }
-                else{
-                    Intent intent = new Intent(TalkActivity.this, FileChooseActivity.class);
-                    intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_SENDIMG);
-                    startActivity(intent);
-                }
-            }
-        });
-
-        try{MsgModel.getInstance().getCombeanById(userId).unread = 0;}catch(Exception e){};
+        MsgModel.getInstance().setFriendReadById(userId);
         listView.setAdapter(talkAdapter = new TalkAdapter(this, userId));
         listView.setSelection(talkAdapter.getCount() - 1);
         MsgModel.getInstance().actListeners();
@@ -197,7 +164,7 @@ public class TalkActivity extends Activity{
             case App.CHOOSE_IMG_INTENT:
                 String temp = intent.getStringExtra("path");
                 if (temp != null) {
-                    final ChatBean chatBean = new ChatBean(userId, AccountModel.getInstance().currentUser.id, App.MSG_IMG + "file://" + temp, AccountModel.getInstance().currentUser.nickname, AccountModel.getInstance().currentUser.headImgUrl, FriendModel.getInstance().getUserById(userId).nickname, FriendModel.getInstance().getUserById(userId).headImgUrl, System.currentTimeMillis());
+                    final ChatBean chatBean = new ChatBean(userId, AccountModel.getInstance().currentUser.id, App.MSG_IMG + "file://" + temp, System.currentTimeMillis(), App.CATEGORY_FRIEND);
                     MsgModel.getInstance().add(chatBean);
                     MsgModel.getInstance().actListeners();
                     try {
@@ -205,8 +172,9 @@ public class TalkActivity extends Activity{
                         file.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(AVException e) {
-                                if (e == null)
-                                    doSend(new ChatBean(userId, AccountModel.getInstance().currentUser.id, App.MSG_IMG + file.getUrl(), AccountModel.getInstance().currentUser.nickname, AccountModel.getInstance().currentUser.headImgUrl, FriendModel.getInstance().getUserById(userId).nickname, FriendModel.getInstance().getUserById(userId).headImgUrl, chatBean.time));
+                                if (e == null) {
+                                    App.sendBroadCast(App.SEND_ACTION, new Msger(chatBean.time, App.C2S_FRIEND_CHAT, new Gson().toJson(new ChatBean(userId, AccountModel.getInstance().currentUser.id, App.MSG_IMG + file.getUrl(), chatBean.time, App.CATEGORY_FRIEND))).toString());
+                                }
                                 else {
                                     MsgModel.getInstance().changeStatu(chatBean.time, App.MSG_SEND_BAD);
                                     MsgModel.getInstance().actListeners();
@@ -228,67 +196,26 @@ public class TalkActivity extends Activity{
             case App.CHOOSE_FILE_INTENT:
                 break;
         }
-
-    }
-
-    public void doSend(ChatBean chatBean) {
-        Intent intent = new Intent(App.SEND_CHAT_ACTION);
-        intent.putExtra("data", new Gson().toJson(chatBean));
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(TalkActivity.this);
-        localBroadcastManager.sendBroadcast(intent);
     }
 
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 2){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Toast.makeText(this, "权限已申请", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(TalkActivity.this, ChooseAlbumActivity.class);
-                    intent.putExtra("sign", App.PHOTO_CHOOSE_SIGN_SENDIMG);
-                    startActivity(intent);
-                }else{
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(this).setTitle("权限申请").setMessage("为了能够设设置头像，请允许我们使用读取文件权限")
-                            .setPositiveButton("立即开启", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    goToAppSetting();
-                                }
-                            }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-                    dialog.show();
-                }
-            }
-        }
-    }
-
-
-    // 跳转到当前应用的设置界面
-    private void goToAppSetting() {
-        Intent intent = new Intent();
-        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", this.getPackageName(), null);
-        intent.setData(uri);
-        startActivityForResult(intent, 123);
-        return;
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        startActivity(new Intent(this, MainActivity.class));
+        albumAsker.onChoose(requestCode, grantResults);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        FriendModel.getInstance().CURRENT_TALK = -1;
         FriendModel.getInstance().listeners.remove(modelListener);
         MsgModel.getInstance().listeners.remove(modelListener);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        albumAsker.onSet(requestCode);
     }
 }

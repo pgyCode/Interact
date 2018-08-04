@@ -14,7 +14,8 @@
     <color name="black">#ff000000</color>
     <color name="red">#f22a2a</color>
 
-    <color name="green">#339633</color>
+    <color name="green">#0ce40c</color>
+    <color name="yellow">#ffc23f</color>
 
 
     <color name="color_truegrew">#ff999999</color>
@@ -28,4 +29,11 @@
     <color name="T_color_header_pink">#fa5185</color>
     <color name="T_color_txt_grew">#7b7b7b</color>
     <color name="T_color_btn_juhong">#f04f43</color>
+
+
+
+
+    <color name="T_main">#3266d7</color>
+    <color name="T_touming">#00000000</color>
+    <color name="T_black">#000000</color>
 </resources>

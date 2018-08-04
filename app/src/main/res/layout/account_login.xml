@@ -27,7 +27,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:textSize="15sp"
-            android:background="@drawable/white_radius_bg"
+            android:background="@drawable/bottom_main_bg"
             android:hint="用户名"
             android:paddingLeft="7dp" />
 
@@ -39,7 +39,7 @@
             android:layout_below="@id/edt_username"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:background="@drawable/white_radius_bg"
+            android:background="@drawable/bottom_main_bg"
             android:hint="密码"
             android:paddingLeft="7dp" />
 
@@ -51,7 +51,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="30dp"
-            android:background="@drawable/ablue_radius_bg"
+            android:background="@color/T_main"
             android:text="登陆"
             android:textSize="15sp"
             android:textStyle="bold"
@@ -65,7 +65,7 @@
             android:background="@color/touming"
             android:text="忘记密码"
             android:id="@+id/btn_find"
-            android:textColor="@color/myblue"
+            android:textColor="@color/T_main"
             android:textSize="15sp" />
 
         <Button
@@ -76,7 +76,7 @@
             android:background="@color/touming"
             android:text="新用户注册"
             android:id="@+id/btn_regist"
-            android:textColor="@color/myblue"
+            android:textColor="@color/T_main"
             android:textSize="15sp" />
     </RelativeLayout>
 

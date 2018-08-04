@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:id="@+id/header"
         android:gravity="bottom"
-        android:background="@color/color_cheng"
+        android:background="@color/T_main"
         android:layout_height="73dp">
         <TextView
             android:layout_width="match_parent"
@@ -29,6 +29,16 @@
             android:background="@color/touming"
             android:src="@drawable/backer"
             android:padding="18dp"/>
+
+        <Button
+            android:id="@+id/btn_regist"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="确定"
+            android:background="@color/touming"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/white"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -48,7 +58,7 @@
             android:layout_marginRight="20dp"
             android:textSize="15sp"
             android:layout_marginTop="30dp"
-            android:background="@drawable/white_radius_bg"
+            android:background="@drawable/bottom_main_bg"
             android:hint="请输入你想要的昵称"
             android:paddingLeft="7dp" />
 
@@ -61,7 +71,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:textSize="15sp"
-            android:background="@drawable/white_radius_bg"
+            android:background="@drawable/bottom_main_bg"
             android:hint="请输入你想要的密码"
             android:paddingLeft="7dp" />
 
@@ -74,22 +84,9 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:textSize="15sp"
-            android:background="@drawable/white_radius_bg"
+            android:background="@drawable/bottom_main_bg"
             android:hint="请重复输入你想要的密码"
             android:paddingLeft="7dp" />
-
-        <Button
-            android:id="@+id/btn_regist"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:layout_below="@id/edt_repassword"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/ablue_radius_bg"
-            android:text="注册"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"/>
     </LinearLayout>
 
 

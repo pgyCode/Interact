@@ -9,12 +9,12 @@
         android:layout_width="match_parent"
         android:id="@+id/header"
         android:fitsSystemWindows="true"
-        android:background="@drawable/gardient_header"
+        android:background="@color/T_main"
         android:layout_height="73dp">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="加入团队"
+            android:text="创建团队"
             android:layout_alignParentBottom="true"
             android:gravity="center"
             android:textColor="@color/white"
@@ -45,13 +45,13 @@
         android:layout_height="50dp"
         android:layout_below="@id/header"
         android:layout_marginLeft="20dp"
+        android:paddingTop="10dp"
         android:layout_marginRight="20dp"
-        android:textSize="17sp"
-        android:inputType="number"
+        android:textSize="16sp"
         android:textColor="@color/black"
         android:lines="1"
-        android:hint="请输入你要创建团队的名称"
-        android:background="@drawable/bottom_cheng_bg"
+        android:maxLength="10"
+        android:background="@drawable/bottom_main_bg"
         android:id="@+id/edt_input"/>
     <ViewStub
         android:layout_width="match_parent"

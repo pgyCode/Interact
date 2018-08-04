@@ -1,19 +1,14 @@
 package com.example.rtyui.mvptalk.model;
 
-import android.accounts.Account;
-
 import com.example.rtyui.mvptalk.Msg.MsgCom;
 import com.example.rtyui.mvptalk.bean.ChatBean;
 import com.example.rtyui.mvptalk.bean.ComBean;
 import com.example.rtyui.mvptalk.parent.Model;
 import com.example.rtyui.mvptalk.tool.App;
-import com.example.rtyui.mvptalk.tool.MySqliteHelper;
 import com.example.rtyui.mvptalk.tool.NetVisitor;
+import com.example.rtyui.mvptalk.tool.NotificationUtils;
 import com.google.gson.Gson;
 
-import java.nio.file.attribute.PosixFileAttributes;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,30 +38,48 @@ public class MsgModel extends Model {
         if (AccountModel.getInstance().currentUser != null){
             List<ChatBean> chatBeans = MySqliteHelper.getInstance().getAll(ChatBean.class);
             for (ChatBean chatBean : chatBeans){
-                flush(chatBean);
+                int id = chatBean.sendId == AccountModel.getInstance().currentUser.id ? chatBean.recvId : chatBean.sendId;
+                if ((chatBean.category == App.CATEGORY_FRIEND && FriendModel.getInstance().getUserById(id) != null) ||
+                        (chatBean.category == App.CATEGORY_TEAM && TeamModel.getInstance().OUTER_getTeamById(id) != null) )
+                    flush(chatBean);
             }
         }
     }
 
     public List<ComBean> comBeans;
+    public boolean isNotifi = false;
 
     /**
      * 辅助函数 添加未读取的消息
      * @param chatBean
      */
-    public void addUnread(ChatBean chatBean){
-        add(chatBean).unread++;
-    }
+//    public void addUnread(ChatBean chatBean){
+//        add(chatBean).unread++;
+//    }
 
     /**
      * 辅助函数 向combean添加chatBean
      * @param chatBean
      * @return
      */
-    public ComBean add(ChatBean chatBean){
-        MySqliteHelper.getInstance().insert(chatBean);
-        //helpBackChat();
-        return flush(chatBean);
+    public void add(ChatBean chatBean){
+        int id = chatBean.sendId == AccountModel.getInstance().currentUser.id ? chatBean.recvId : chatBean.sendId;
+        if ((chatBean.category == App.CATEGORY_FRIEND && FriendModel.getInstance().getUserById(id) != null) ||
+                (chatBean.category == App.CATEGORY_TEAM && TeamModel.getInstance().OUTER_getTeamById(chatBean.recvId) != null) ){
+            if ((chatBean.category == App.CATEGORY_FRIEND && FriendModel.getInstance().CURRENT_TALK == chatBean.sendId)
+                    || (chatBean.category == App.CATEGORY_TEAM && TeamModel.getInstance().CURRENT_TALK == chatBean.recvId)
+                    || AccountModel.getInstance().currentUser.id == chatBean.sendId){
+                chatBean.read = App.MSG_READ;
+                flush(chatBean);
+            }else{
+                chatBean.read = App.MSG_UNREAD;
+                flush(chatBean);
+                if (isNotifi){
+                    new NotificationUtils(App.context).sendNotification(chatBean);
+                }
+            }
+            MySqliteHelper.getInstance().insert(chatBean);
+        }
     }
 
     /**
@@ -75,26 +88,49 @@ public class MsgModel extends Model {
      * @return
      */
     public ComBean flush(ChatBean chatBean){
-        int id = chatBean.sendId == AccountModel.getInstance().currentUser.id ? chatBean.recvId : chatBean.sendId;
-        ComBean comBean = null;
-        for (int i = 0; i < comBeans.size(); i++){
-            if (comBeans.get(i).userId == id){
-                comBean = comBeans.get(i);
+        if (chatBean.category == App.CATEGORY_FRIEND){
+            int id = chatBean.sendId == AccountModel.getInstance().currentUser.id ? chatBean.recvId : chatBean.sendId;
+            ComBean comBean = null;
+            for (int i = 0; i < comBeans.size(); i++){
+                if (comBeans.get(i).id == id && comBeans.get(i).category == App.CATEGORY_FRIEND){
+                    comBean = comBeans.get(i);
+                }
             }
+            if (comBean == null){
+                List<ChatBean> chatBeans = new LinkedList<>();
+                comBean = new ComBean(
+                        id,
+                        chatBean.category,
+                        chatBeans);
+                comBeans.add(comBean);
+            }
+            comBean.chats.add(chatBean);
+            comBeans.remove(comBean);
+            comBeans.add(0, comBean);
+            return comBean;
+        }else if (chatBean.category == App.CATEGORY_TEAM){
+            int id = chatBean.recvId;
+            ComBean comBean = null;
+            for (int i = 0; i < comBeans.size(); i++){
+                if (comBeans.get(i).id == id && comBeans.get(i).category == App.CATEGORY_TEAM){
+                    comBean = comBeans.get(i);
+                }
+            }
+            if (comBean == null){
+                List<ChatBean> chatBeans = new LinkedList<>();
+                comBean = new ComBean(
+                        id,
+                        chatBean.category,
+                        chatBeans);
+                comBeans.add(comBean);
+            }
+            comBean.chats.add(chatBean);
+            comBeans.remove(comBean);
+            comBeans.add(0, comBean);
+            return comBean;
         }
-        if (comBean == null){
-            List<ChatBean> chatBeans = new LinkedList<>();
-            comBean = new ComBean(
-                    chatBean.sendId == AccountModel.getInstance().currentUser.id ? chatBean.recvId : chatBean.sendId,
-                    chatBean.sendNickname.equals(AccountModel.getInstance().currentUser.nickname) ? chatBean.recvNickname : chatBean.sendNickname,
-                    chatBean.sendHeadImgUrl.equals(AccountModel.getInstance().currentUser.headImgUrl) ? chatBean.recvHeadImgUrl : chatBean.sendHeadImgUrl, chatBeans);
-            comBeans.add(comBean);
-        }
-        comBean.chats.add(chatBean);
-        comBean.time = chatBean.time;
-        comBeans.remove(comBean);
-        comBeans.add(0, comBean);
-        return comBean;
+        else
+            return null;
     }
 
     /**
@@ -103,12 +139,17 @@ public class MsgModel extends Model {
      */
     public int doFlush() {
         try{
-            String temp = NetVisitor.postNormal(App.host + "Talk/msg/getUnrecvMsg", "id=" +
+            String temp = NetVisitor.postNormal(App.host + "Talk/msg/getUnrecvMsg", "owner=" +
                     AccountModel.getInstance().currentUser.id);
             List<ChatBean> chatBeans1 = new Gson().fromJson(temp, MsgCom.class).data;
-            for (ChatBean chatBean : chatBeans1){
-                chatBean.time = System.currentTimeMillis();
-                addUnread(chatBean);
+            if (chatBeans1 != null){
+                for (ChatBean chatBean : chatBeans1){
+                    chatBean.time = System.currentTimeMillis();
+                    int id = chatBean.sendId == AccountModel.getInstance().currentUser.id ? chatBean.recvId : chatBean.sendId;
+                    if ((chatBean.category == App.CATEGORY_FRIEND && FriendModel.getInstance().getUserById(id) != null) ||
+                            (chatBean.category == App.CATEGORY_TEAM && TeamModel.getInstance().OUTER_getTeamById(id) != null) )
+                        add(chatBean);
+                }
             }
             return App.NET_SUCCEED;
         }catch(Exception e){
@@ -121,13 +162,41 @@ public class MsgModel extends Model {
      * @param id
      * @return
      */
-    public ComBean getCombeanById(int id){
+    public ComBean INNER_getCombeanById(int id){
         for (int i = 0; i < comBeans.size(); i++){
-            if (comBeans.get(i).userId == id)
+            if (comBeans.get(i).id == id)
                 return comBeans.get(i);
         }
         return null;
     }
+
+    /**
+     * 辅助函数 从id得到comBean
+     * @param id
+     * @return
+     */
+    public ComBean getFriendCombeanById(int id){
+        for (int i = 0; i < comBeans.size(); i++){
+            if (comBeans.get(i).id == id && comBeans.get(i).category == App.CATEGORY_FRIEND)
+                return comBeans.get(i);
+        }
+        return null;
+    }
+
+    /**
+     * 辅助函数 从id得到comBean
+     * @param id
+     * @return
+     */
+    public ComBean getTeamCombeanById(int id){
+        for (int i = 0; i < comBeans.size(); i++){
+            if (comBeans.get(i).id == id  && comBeans.get(i).category == App.CATEGORY_TEAM)
+                return comBeans.get(i);
+        }
+        return null;
+    }
+
+
 
 
     /**
@@ -137,9 +206,67 @@ public class MsgModel extends Model {
     public int getUnread(){
         int sum = 0;
         for (int i = 0; i < comBeans.size(); i++){
-            sum += comBeans.get(i).unread;
+            sum += getUnreadByPosition(i);
         }
         return sum;
+    }
+
+
+    /**
+     * 辅助函数 获取未读取的总数
+     * @return 返回总数
+     */
+    public int getUnreadByPosition(int position){
+        int sum = 0;
+        List<ChatBean> chatBeans = comBeans.get(position).chats;
+        for (int i = 0; i < chatBeans.size(); i++){
+            if (chatBeans.get(i).read == App.MSG_UNREAD)
+                sum++;
+        }
+        return sum;
+    }
+
+
+    /**
+     * 辅助函数 设置为已经读取
+     * @return 返回总数
+     */
+    public void setFriendReadById(int id){
+        ComBean comBean = MsgModel.getInstance().getFriendCombeanById(id);
+        if (comBean != null) {
+            List<ChatBean> chatBeans = comBean.chats;
+            for (int i = 0; i < chatBeans.size(); i++) {
+                if (chatBeans.get(i).read == App.MSG_UNREAD)
+                    chatBeans.get(i).read = App.MSG_READ;
+            }
+        }
+        MySqliteHelper.getInstance().update(ChatBean.class, " read = " + App.MSG_READ, "(sendId = " +
+                id +
+                " or recvId = " +
+                id +
+                ") and read = " +
+                App.MSG_UNREAD);
+    }
+
+    /**
+     * 辅助函数 设置为已经读取
+     * @return 返回总数
+     */
+    public void setTeamReadById(int id){
+        ComBean comBean = MsgModel.getInstance().getTeamCombeanById(id);
+        if (comBean != null) {
+            List<ChatBean> chatBeans = comBean.chats;
+            for (int i = 0; i < chatBeans.size(); i++) {
+                if (chatBeans.get(i).read == App.MSG_UNREAD)
+                    chatBeans.get(i).read = App.MSG_READ;
+            }
+        }
+        MySqliteHelper.getInstance().update(ChatBean.class, " read = " + App.MSG_READ, "(sendId = " +
+                id +
+                " or recvId = " +
+                id +
+                ") and read = " +
+                App.MSG_UNREAD);
     }
 
     //更改消息状态
@@ -147,8 +274,26 @@ public class MsgModel extends Model {
         MySqliteHelper.getInstance().update(ChatBean.class, " statu =" + statu, " time =" + time );
         for (int i = 0; i < comBeans.size(); i++){
             for (int j = 0; j < comBeans.get(i).chats.size(); j++){
-                if (comBeans.get(i).chats.get(j).time == time)
+                if (comBeans.get(i).chats.get(j).time == time) {
                     comBeans.get(i).chats.get(j).statu = statu;
+                    break;
+                }
+            }
+        }
+    }
+
+    //更改消息状态
+    public void setFailure(long time){
+        System.out.println("我们都在这里");
+        if (comBeans != null){
+            MySqliteHelper.getInstance().update(ChatBean.class, " statu =" + App.MSG_SEND_BAD, "statu = " +
+                    App.MSG_SEND_ING +
+                    " and time <" + (time - 3000) );
+            for (int i = 0; i < comBeans.size(); i++){
+                for (int j = 0; j < comBeans.get(i).chats.size(); j++){
+                    if (comBeans.get(i).chats.get(j).time < time - 3000 && comBeans.get(i).chats.get(j).statu == App.MSG_SEND_ING)
+                        comBeans.get(i).chats.get(j).statu = App.MSG_SEND_BAD;
+                }
             }
         }
     }
@@ -158,7 +303,7 @@ public class MsgModel extends Model {
     public int getImgPosition(int truePosition, int id){
         int count = -1;
         for (int i = 0; i < comBeans.size(); i++){
-            if (id == comBeans.get(i).userId){
+            if (id == comBeans.get(i).id){
                 for (int j = 0; j <= truePosition; j++){
                     if (comBeans.get(i).chats.get(j).msg.startsWith(App.MSG_IMG))
                         count++;
@@ -173,7 +318,7 @@ public class MsgModel extends Model {
     public int getMsgPosition(int id, int imgPosition){
         int count = -1;
         for (int i = 0; i < comBeans.size(); i++){
-            if (id == comBeans.get(i).userId){
+            if (id == comBeans.get(i).id){
                 for (int j = 0; j <= comBeans.get(i).chats.size(); j++){
                     if (comBeans.get(i).chats.get(j).msg.startsWith(App.MSG_IMG)){
                         count++;
@@ -190,7 +335,7 @@ public class MsgModel extends Model {
     public int getImgCount(int id){
         int count = 0;
         for (int i = 0; i < comBeans.size(); i++){
-            if (id == comBeans.get(i).userId){
+            if (id == comBeans.get(i).id){
                 for (int j = 0; j < comBeans.get(i).chats.size(); j++){
                     if (comBeans.get(i).chats.get(j).msg.startsWith(App.MSG_IMG))
                         count++;
@@ -213,19 +358,13 @@ public class MsgModel extends Model {
             return comBeans.size();
     }
 
-    /**
-     * 协助后台消息到来
-     */
-    private void helpBackChat(){
-        if (AccountModel.getInstance().currentUser == null)
-            AccountModel.getInstance().init();
-        if (MsgModel.getInstance().comBeans == null)
-            MsgModel.getInstance().init();
-        if (FriendModel.getInstance().linkFriends == null)
-            FriendModel.getInstance().init();
-        if (TeamMsgModel.getInstance().comBeans == null)
-            TeamMsgModel.getInstance().init();
-        if (TeamModel.getInstance().teamBeans == null)
-            TeamModel.getInstance().OUTER_init();
+    public void delFriendFromLocal(int id){
+        MsgModel.getInstance().comBeans.remove(MsgModel.getInstance().getFriendCombeanById(id));
+        MySqliteHelper.getInstance().delete(ChatBean.class, "recvId =" +
+                id +
+                " or sendId=" +
+                id +
+                " and category=" +
+                App.CATEGORY_FRIEND);
     }
 }

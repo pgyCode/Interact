@@ -1,28 +1,22 @@
 package com.example.rtyui.mvptalk.view.friend;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.rtyui.mvptalk.R;
-import com.example.rtyui.mvptalk.adapter.FriendPageAdapter;
-import com.example.rtyui.mvptalk.bean.AddFriendBean;
-import com.example.rtyui.mvptalk.model.AccountModel;
-import com.example.rtyui.mvptalk.model.FriendModel;
+import com.example.rtyui.mvptalk.adapter.FriendAskerAdapter;
+import com.example.rtyui.mvptalk.back.Msger;
 import com.example.rtyui.mvptalk.model.RequestModel;
 import com.example.rtyui.mvptalk.parent.OnModelChangeListener;
 import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.NetTaskCode;
 import com.example.rtyui.mvptalk.tool.NetTaskCodeListener;
-import com.google.gson.Gson;
-
-import java.lang.ref.WeakReference;
 
 /**
  * Created by rtyui on 2018/5/15.
@@ -30,14 +24,10 @@ import java.lang.ref.WeakReference;
 
 public class NewFriendActivity extends Activity {
 
-    private final int NET_FAil = -1;
-    private final int LOGIN_SUCCEED = 2;
-
     private ViewStub loading = null;
-    private ViewStub noany = null;
     private ListView lst = null;
 
-    private FriendPageAdapter adapter = null;
+    private FriendAskerAdapter adapter = null;
 
     private OnModelChangeListener modelListener;
 
@@ -47,7 +37,6 @@ public class NewFriendActivity extends Activity {
         setContentView(R.layout.link_friend_newfriend);
 
         loading = findViewById(R.id.loading);
-        noany = findViewById(R.id.noany);
 
         lst = findViewById(R.id.lst);
 
@@ -59,29 +48,33 @@ public class NewFriendActivity extends Activity {
             }
         });
 
-        lst.setAdapter(adapter = new FriendPageAdapter(this, new FriendPageAdapter.OnActionListener() {
+        lst.setAdapter(adapter = new FriendAskerAdapter(this, new FriendAskerAdapter.OnActionListener() {
             @Override
             public void doAgree(final int position) {
-                new AsyncTask<Void, Void, Integer>(){
-
+                final int id = RequestModel.getInstance().addFriendBeans.get(position).recvId;
+                new NetTaskCode(new NetTaskCodeListener() {
                     @Override
-                    protected void onPreExecute() {
-                        super.onPreExecute();
-                        beforeLoading();
+                    public void before() {
+                        loading.setVisibility(View.VISIBLE);
                     }
 
                     @Override
-                    protected Integer doInBackground(Void... voids) {
+                    public int middle() {
                         return RequestModel.getInstance().AgreeRequest(position);
                     }
 
                     @Override
-                    protected void onPostExecute(Integer aVoid) {
-                        super.onPostExecute(aVoid);
-                        afterLoading(aVoid);
-                        sendBroadCast(position);
+                    public void after(int code) {
+                        loading.setVisibility(View.GONE);
+                        if (code == App.NET_SUCCEED){
+                            Toast.makeText(NewFriendActivity.this, "确认同意成功", Toast.LENGTH_SHORT).show();
+                            App.sendBroadCast(App.SEND_ACTION, new Msger(System.currentTimeMillis(), App.C2S_AGREE_FRIEND, id + "").toString());
+                            RequestModel.getInstance().actListeners();
+                        }else{
+                            Toast.makeText(NewFriendActivity.this, "确认同意失败", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }.execute();
+                }).execute();
             }
 
             @Override
@@ -91,7 +84,7 @@ public class NewFriendActivity extends Activity {
                     @Override
                     protected void onPreExecute() {
                         super.onPreExecute();
-                        beforeLoading();
+                        loading.setVisibility(View.VISIBLE);
                     }
 
                     @Override
@@ -102,7 +95,7 @@ public class NewFriendActivity extends Activity {
                     @Override
                     protected void onPostExecute(Integer aVoid) {
                         super.onPostExecute(aVoid);
-                        afterLoading(aVoid);
+                        loading.setVisibility(View.GONE);
                     }
                 }.execute();
             }
@@ -119,7 +112,7 @@ public class NewFriendActivity extends Activity {
         new NetTaskCode(new NetTaskCodeListener() {
             @Override
             public void before() {
-                beforeLoading();
+                loading.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -129,39 +122,18 @@ public class NewFriendActivity extends Activity {
 
             @Override
             public void after(int code) {
-                afterLoading(code);
+                loading.setVisibility(View.GONE);
+                if (code == App.NET_SUCCEED){
+                    RequestModel.getInstance().actListeners();
+                }
             }
         }).execute();
-    }
-
-    private void beforeLoading(){
-        loading.setVisibility(View.VISIBLE);
-    }
-
-    private void afterLoading(int code){
-        loading.setVisibility(View.GONE);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         adapter.notifyDataSetChanged();
-    }
-
-
-    private void sendBroadCast(int position){
-        Intent intent = new Intent(App.RECV_ADD_FRIEND_ACTION);
-
-        AddFriendBean addFriendBean = new AddFriendBean(
-                AccountModel.getInstance().currentUser.id,
-                AccountModel.getInstance().currentUser.nickname,
-                AccountModel.getInstance().currentUser.headImgUrl,
-                RequestModel.getInstance().addFriendBeans.get(position).sendId);
-        intent.putExtra("data", new Gson().toJson(addFriendBean));
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        localBroadcastManager.sendBroadcast(intent);
-        RequestModel.getInstance().addFriendBeans.remove(position);
-        RequestModel.getInstance().actListeners();
     }
 
     @Override

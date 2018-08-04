@@ -9,11 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.rtyui.mvptalk.R;
+import com.example.rtyui.mvptalk.bean.ChatBean;
 import com.example.rtyui.mvptalk.bean.ComBean;
 import com.example.rtyui.mvptalk.model.FriendModel;
 import com.example.rtyui.mvptalk.model.MsgModel;
 import com.example.rtyui.mvptalk.model.TeamModel;
-import com.example.rtyui.mvptalk.model.TeamMsgModel;
 import com.example.rtyui.mvptalk.tool.App;
 import com.example.rtyui.mvptalk.tool.MyImgShow;
 
@@ -34,7 +34,7 @@ public class MsgAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-         return MsgModel.getInstance().LOCAL_getSize() + TeamMsgModel.getInstance().LOCAL_getSize();
+         return MsgModel.getInstance().LOCAL_getSize();
     }
 
     @Override
@@ -58,59 +58,34 @@ public class MsgAdapter extends BaseAdapter {
             viewHolder.txtCount = convertView.findViewById(R.id.txt_num);
             viewHolder.txtLastMsg = convertView.findViewById(R.id.txt_msg);
             viewHolder.txtTime = convertView.findViewById(R.id.txt_time);
-            viewHolder.txtCotegory = convertView.findViewById(R.id.txt_category);
             convertView.setTag(viewHolder);
         }else{
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        if (position < MsgModel.getInstance().LOCAL_getSize()){
-            MyImgShow.showNetImgCircle(context, FriendModel.getInstance().getUserById(MsgModel.getInstance().comBeans.get(position).userId).headImgUrl, viewHolder.imgHead);
-            if (MsgModel.getInstance().comBeans.get(position).unread == 0)
-                viewHolder.txtCount.setVisibility(View.INVISIBLE);
-            else{
-                viewHolder.txtCount.setText(MsgModel.getInstance().comBeans.get(position).unread + "");
-                viewHolder.txtCount.setVisibility(View.VISIBLE);
-            }
-            viewHolder.txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(MsgModel.getInstance().comBeans.get(position).time));
-            System.out.println(MsgModel.getInstance().comBeans.get(position).userId);
-            viewHolder.txtNick.setText(FriendModel.getInstance().getUserById(MsgModel.getInstance().comBeans.get(position).userId).remark);
-            String temp = MsgModel.getInstance().comBeans.get(position).chats.get(MsgModel.getInstance().comBeans.get(position).chats.size() - 1).getMsg();
-
-            if (temp.startsWith(App.MSG_CHAT))
-                viewHolder.txtLastMsg.setText(temp.replace(App.MSG_CHAT, ""));
-            else if (temp.startsWith(App.MSG_IMG))
-                viewHolder.txtLastMsg.setText("[图片]");
-
-            if (position == 0){
-                viewHolder.txtCotegory.setText("好友消息");
-                viewHolder.txtCotegory.setVisibility(View.VISIBLE);
-            }
-            else
-                viewHolder.txtCotegory.setVisibility(View.GONE);
-        }else{
-            MyImgShow.showNetImgCircle(context, TeamModel.getInstance().OUTER_getTeamById(TeamMsgModel.getInstance().comBeans.get(position - MsgModel.getInstance().LOCAL_getSize()).id).headImgUrl, viewHolder.imgHead);
-            if (TeamMsgModel.getInstance().getCombeanById(TeamMsgModel.getInstance().comBeans.get(position - MsgModel.getInstance().LOCAL_getSize()).id).unread == 0)
-                viewHolder.txtCount.setVisibility(View.INVISIBLE);
-            else{
-                viewHolder.txtCount.setText(TeamMsgModel.getInstance().getCombeanById(TeamMsgModel.getInstance().comBeans.get(position - MsgModel.getInstance().LOCAL_getSize()).id).unread + "");
-                viewHolder.txtCount.setVisibility(View.VISIBLE);
-            }
-            viewHolder.txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(TeamMsgModel.getInstance().comBeans.get(position - MsgModel.getInstance().LOCAL_getSize()).chats.get(TeamMsgModel.getInstance().comBeans.get(position - MsgModel.getInstance().LOCAL_getSize()).chats.size() - 1).time));
-            viewHolder.txtNick.setText(TeamModel.getInstance().OUTER_getTeamById(TeamMsgModel.getInstance().comBeans.get(position - MsgModel.getInstance().LOCAL_getSize()).id).nickname);
-            String temp = TeamMsgModel.getInstance().comBeans.get(position - MsgModel.getInstance().LOCAL_getSize()).chats.get(TeamMsgModel.getInstance().comBeans.get(position - MsgModel.getInstance().LOCAL_getSize()).chats.size() - 1).msg;
-
-            if (temp.startsWith(App.MSG_CHAT))
-                viewHolder.txtLastMsg.setText(temp.replace(App.MSG_CHAT, ""));
-            else if (temp.startsWith(App.MSG_IMG))
-                viewHolder.txtLastMsg.setText("[图片]");
-
-            if (position == MsgModel.getInstance().LOCAL_getSize()){
-                viewHolder.txtCotegory.setText("团队消息");
-                viewHolder.txtCotegory.setVisibility(View.VISIBLE);
-            }
-            else
-                viewHolder.txtCotegory.setVisibility(View.GONE);
+        ComBean comBean = MsgModel.getInstance().comBeans.get(position);
+        ChatBean chatBean = comBean.chats.get(comBean.chats.size() - 1);
+        if (chatBean.category == App.CATEGORY_FRIEND){
+            MyImgShow.showNetImgCircle(context, FriendModel.getInstance().getUserById(MsgModel.getInstance().comBeans.get(position).id).headImgUrl, viewHolder.imgHead);
+            viewHolder.txtNick.setText(FriendModel.getInstance().getUserById(MsgModel.getInstance().comBeans.get(position).id).remark);
+        }else if (chatBean.category == App.CATEGORY_TEAM){
+            MyImgShow.showNetImgCircle(context, TeamModel.getInstance().OUTER_getTeamById(comBean.id).headImgUrl, viewHolder.imgHead);
+            viewHolder.txtNick.setText(TeamModel.getInstance().OUTER_getTeamById(comBean.id).nickname);
         }
+
+        if (MsgModel.getInstance().getUnreadByPosition(position) == 0)
+            viewHolder.txtCount.setVisibility(View.INVISIBLE);
+        else{
+            viewHolder.txtCount.setText(MsgModel.getInstance().getUnreadByPosition(position) + "");
+            viewHolder.txtCount.setVisibility(View.VISIBLE);
+        }
+        viewHolder.txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(MsgModel.getInstance().comBeans.get(position).chats.get(MsgModel.getInstance().comBeans.get(position).chats.size() - 1).time));
+        System.out.println(MsgModel.getInstance().comBeans.get(position).id);
+        String temp = MsgModel.getInstance().comBeans.get(position).chats.get(MsgModel.getInstance().comBeans.get(position).chats.size() - 1).getMsg();
+
+        if (temp.startsWith(App.MSG_CHAT))
+            viewHolder.txtLastMsg.setText(temp.replace(App.MSG_CHAT, ""));
+        else if (temp.startsWith(App.MSG_IMG))
+            viewHolder.txtLastMsg.setText("[图片]");
         return convertView;
     }
 
@@ -120,6 +95,5 @@ public class MsgAdapter extends BaseAdapter {
         public TextView txtCount;
         public TextView txtLastMsg;
         public TextView txtTime;
-        public TextView txtCotegory;
     }
 }

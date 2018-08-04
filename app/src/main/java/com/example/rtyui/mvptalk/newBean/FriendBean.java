@@ -15,4 +15,6 @@ public class FriendBean implements Serializable {
         this.headImgUrl = headImgUrl;
         this.remark = remark;
     }
+
+    public FriendBean(){}
 }
