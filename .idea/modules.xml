@@ -4,8 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Interact.iml" filepath="$PROJECT_DIR$/Interact.iml" />
       <module fileurl="file://$PROJECT_DIR$/PullUpAndPullDown/PullUpAndPullDown.iml" filepath="$PROJECT_DIR$/PullUpAndPullDown/PullUpAndPullDown.iml" />
-      <module fileurl="file://$PROJECT_DIR$/PullUpAndPullDown/PullUpAndPullDown.iml" filepath="$PROJECT_DIR$/PullUpAndPullDown/PullUpAndPullDown.iml" />
-      <module fileurl="file://$PROJECT_DIR$/SideSlip/SideSlip.iml" filepath="$PROJECT_DIR$/SideSlip/SideSlip.iml" />
       <module fileurl="file://$PROJECT_DIR$/SideSlip/SideSlip.iml" filepath="$PROJECT_DIR$/SideSlip/SideSlip.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
